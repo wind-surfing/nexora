@@ -1,0 +1,38 @@
+import React from "react";
+import Logo from "./Logo";
+import Profile from "./Profile";
+import Link from "next/link";
+
+function Navbar() {
+  return (
+    <header className="w-full px-4 flex flex-row items-center justify-between">
+      <Logo></Logo>
+      <nav>
+        <ul className="flex flex-row items-center gap-6">
+          <Link href={"/home"} className="relative group">
+            <li className="flex flex-row items-center justify-center hover:text-primary">
+              Home
+            </li>
+            <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform"></span>
+          </Link>
+          <Link href={"/store"} className="relative group">
+            <li className="flex flex-row items-center justify-center hover:text-primary">
+              Store
+            </li>
+            <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform"></span>
+          </Link>
+          <Link href={"/play"} className="relative group">
+            <li className="flex flex-row items-center justify-center hover:text-primary">
+              Play
+            </li>
+            <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform"></span>
+          </Link>
+        </ul>
+      </nav>
+
+      <Profile></Profile>
+    </header>
+  );
+}
+
+export default Navbar;
