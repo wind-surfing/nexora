@@ -4,7 +4,9 @@ import Button from "@/components/shared/Button";
 import InputField from "@/components/shared/InputField";
 import { Separator } from "@/components/ui/separator";
 import { LockIcon, UserIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React from "react";
+import { toast } from "sonner";
 
 const credentials = [
   {
@@ -22,10 +24,33 @@ function Page() {
     username: string;
     password: string;
   }>({ username: "", password: "" });
+  const router = useRouter();
+  
 
   const handleChange = (value: string, field: "username" | "password") => {
     setData((prev) => ({ ...prev, [field]: value }));
   };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("Submitted data:", data);
+
+    const isCredentialValid = credentials.some((cred) => 
+      cred.username === data.username && cred.password === data.password
+    );
+
+    localStorage.setItem("isAuthenticated", isCredentialValid ? "true" : "false");
+    localStorage.setItem("username", data.username);
+    localStorage.setItem("password", data.password);
+
+
+    if (isCredentialValid) {
+      toast.success("Login successful!");
+      router.push("/home");
+    } else {
+      toast.error("Invalid credentials!");
+    }
+  }
 
   return (
     <>
@@ -63,7 +88,7 @@ function Page() {
         </section>
         <section className="flex flex-col items-center justify-center w-1/2 h-full gap-6">
           <form
-            action=""
+            onSubmit={handleSubmit}
             className="w-3/4 flex flex-col items-center justify-center gap-4"
           >
             <h1 className="text-4xl text-center">Login</h1>
