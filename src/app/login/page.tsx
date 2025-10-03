@@ -1,12 +1,32 @@
+"use client"
+
 import Button from "@/components/shared/Button";
 import InputField from "@/components/shared/InputField";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { LockIcon, Mail, UserIcon } from "lucide-react";
-import Image from "next/image";
+import { LockIcon, UserIcon } from "lucide-react";
 import React from "react";
 
-function page() {
+const credentials = [
+  {
+    username: "user",
+    password: "password",
+  },
+  {
+    username: "admin",
+    password: "admin",
+  },
+];
+
+function Page() {
+  const [data, setData] = React.useState<{
+    username: string;
+    password: string;
+  }>({ username: "", password: "" });
+
+  const handleChange = (value: string, field: "username" | "password") => {
+    setData((prev) => ({ ...prev, [field]: value }));
+  };
+
   return (
     <>
       <main className="flex flex-row items-center justify-between w-full h-[calc(100vh-76px)]">
@@ -16,17 +36,28 @@ function page() {
               Please use the dummy credentials to login
             </h1>
             <Separator />
-            <ol>
-              <li className="flex flex-col items-start justify-center">
-                <span>
-                  <span className="text-primary">Username: </span>
-                  <span>user</span>
-                </span>
-                <span>
-                  <span className="text-primary">Password: </span>
-                  <span>password</span>
-                </span>
-              </li>
+            <ol className="flex flex-col w-full gap-2 list-inside list-decimal">
+              {credentials.map((cred, index) => (
+                <li
+                  key={index}
+                  className="flex flex-row items-start justify-between bg-muted p-4 rounded-lg"
+                >
+                  <div className="flex flex-col items-start justify-center">
+                    <span>
+                      <span className="text-primary">Username: </span>
+                      <span>{cred.username}</span>
+                    </span>
+                    <span>
+                      <span className="text-primary">Password: </span>
+                      <span>{cred.password}</span>
+                    </span>
+                  </div>
+                  <Button
+                    onClick={() => setData(cred)}
+                    title="Use This"
+                  ></Button>
+                </li>
+              ))}
             </ol>
           </article>
         </section>
@@ -42,13 +73,18 @@ function page() {
                 name="name"
                 type="text"
                 placeholder="Name"
+                value={data.username}
+                onChange={(value) => handleChange(value, "username")}
                 className="w-full"
               />
               <InputField
                 icon={<LockIcon />}
                 name="password"
                 type="password"
+                closeOption
                 placeholder="Password"
+                value={data.password}
+                onChange={(value) => handleChange(value, "password")}
                 className="w-full"
               />
               <Button
@@ -63,4 +99,4 @@ function page() {
     </>
   );
 }
-export default page;
+export default Page;

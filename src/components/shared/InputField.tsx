@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useId } from "react";
-import "@/styles/input-styles.css"
+import React, { useId, useState } from "react";
+import "@/styles/input-styles.css";
 import clsx from "clsx";
+import { GoEye, GoEyeClosed } from "react-icons/go";
 
 export interface InputFieldProps {
   name: string;
@@ -20,6 +21,7 @@ export interface InputFieldProps {
   icon?: React.ReactNode;
   className?: string;
   inputClassName?: string;
+  closeOption?: boolean;
   onChange?: (value: string, e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
@@ -40,16 +42,17 @@ const InputField: React.FC<InputFieldProps> = ({
   icon,
   className = "",
   inputClassName = "",
+  closeOption=false,
   onChange,
   onBlur,
 }) => {
   const reactId = useId();
   const inputId = `${name}-${reactId}`;
   const errorId = error ? `${inputId}-error` : undefined;
+  const [isClosed, setIsClosed] = useState(closeOption);
 
   return (
     <>
-
       <div
         className={clsx(
           "input-field bg-white dark:bg-gray-800 border relative flex items-center border-gray-300 dark:border-gray-600",
@@ -66,7 +69,7 @@ const InputField: React.FC<InputFieldProps> = ({
         <input
           id={inputId}
           name={name}
-          type={type}
+          type={isClosed ? "password" : !isClosed && type === "password" ? "text" : type}
           placeholder={placeholder}
           value={value}
           defaultValue={defaultValue}
@@ -88,6 +91,22 @@ const InputField: React.FC<InputFieldProps> = ({
         />
         {error && (
           <span id={errorId} className="sr-only">{`Error: ${error}`}</span>
+        )}
+        {closeOption && (
+          <div className="absolute flex h-full items-center right-3 top-0">
+            {" "}
+            {isClosed ? (
+              <GoEyeClosed
+                className="inline cursor-pointer text-gray-600 dark:text-gray-400 w-4 h-4"
+                onClick={() => setIsClosed(false)}
+              />
+            ) : (
+              <GoEye
+                className="inline cursor-pointer text-gray-600 dark:text-gray-400 w-4 h-4"
+                onClick={() => setIsClosed(true)}
+              />
+            )}
+          </div>
         )}
       </div>
     </>
