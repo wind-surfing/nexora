@@ -3,30 +3,13 @@
 import Button from "@/components/shared/Button";
 import InputField from "@/components/shared/InputField";
 import { Separator } from "@/components/ui/separator";
+import { credentials } from "@/config";
 import { storeCredentials } from "@/helper/idb";
 import { LockIcon, UserIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
 
-const credentials = [
-  {
-    username: "user",
-    password: "password",
-    coins: 30,
-  },
-  {
-    username: "test123",
-    password: "test123",
-    coins: 30,
-  },
-  {
-    username: process.env.NEXT_PUBLIC_ADMIN_USERNAME!,
-    password: process.env.NEXT_PUBLIC_ADMIN_PASSWORD!,
-    secure: true,
-    coins: 1000,
-  },
-];
 
 function Page() {
   const [data, setData] = React.useState<{
