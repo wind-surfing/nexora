@@ -1,3 +1,5 @@
+"use client";
+
 import Button from "@/components/shared/Button";
 import InputField from "@/components/shared/InputField";
 import { Switch } from "@/components/ui/switch";
@@ -15,9 +17,21 @@ import {
   FaWandMagicSparkles,
 } from "react-icons/fa6";
 import { IoMdSwap } from "react-icons/io";
-import React from "react";
+import React, { useState } from "react";
+import { Card, Cardset } from "@/types/cards";
 
-function page() {
+function Page() {
+  const [cardSetData, setCardSetData] = useState<Cardset>({
+    idea: "",
+    description: "",
+  });
+
+  const [cardSetDataList, setCardSetDataList] = useState<Card[]>([]);
+
+  const handleChange = (value: string, field: "idea" | "description") => {
+    setCardSetData((prev) => ({ ...prev, [field]: value }));
+  };
+
   return (
     <main className="flex flex-row items-center justify-center w-full h-[calc(100vh-76px)] px-4">
       <section className="flex flex-col items-center  w-4/5 h-full gap-6">
@@ -31,15 +45,19 @@ function page() {
         <div className="flex flex-col items-center justify-center w-full">
           <InputField
             icon={<MdOutlineTitle />}
-            name="name"
+            name="idea"
             type="text"
-            placeholder="Enter set name"
+            placeholder="Enter set idea"
+            value={cardSetData.idea}
+            onChange={(value) => handleChange(value, "idea")}
           />
           <InputField
             icon={<MdSubtitles />}
             name="description"
             type="text"
             placeholder="Add a description..."
+            value={cardSetData.description}
+            onChange={(value) => handleChange(value, "description")}
           />
         </div>
         <div className="flex flex-row items-center justify-between w-full gap-4">
@@ -81,4 +99,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

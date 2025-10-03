@@ -1,17 +1,16 @@
 [
   {
     "front": {
-      "title": "",
-      "description": "",
-      "src": ""
+      "term": "",
+      "src": "",
+      "alt": ""
     },
     "back": {
-      "title": "",
-      "description": "",
-      "src": ""
+      "definition": "",
+      "src": "",
+      "alt": ""
     },
-    "question": "",
-    "answer": "",
+    "hint": "",
     "theme": "",
     "category": ""
   }
