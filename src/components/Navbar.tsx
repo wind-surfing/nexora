@@ -6,7 +6,6 @@ import Link from "next/link";
 function Navbar() {
   return (
     <header className="w-full px-4 flex flex-row items-center justify-between">
-      <Logo></Logo>
       <nav>
         <ul className="flex flex-row items-center gap-6">
           <Link href={"/home"} className="relative group">
@@ -29,6 +28,8 @@ function Navbar() {
           </Link>
         </ul>
       </nav>
+
+      <Logo></Logo>
 
       <Profile></Profile>
     </header>

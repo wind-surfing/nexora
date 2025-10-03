@@ -25,7 +25,7 @@ export default function Home() {
               <span className="font-normal">easy.</span>
             </h2>
           </div>
-            <Button title="Get Started"></Button>
+          <Button href="/login" title="Get Started"></Button>
         </section>
         <figure className="w-1/2 h-full">
           <Image
