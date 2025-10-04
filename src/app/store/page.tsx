@@ -41,15 +41,15 @@ function Page() {
   };
 
   return (
-    <main className="flex flex-row items-center justify-center w-full h-[calc(100vh-76px)] px-4">
+    <main className="flex flex-row items-center justify-center w-full py-16 px-4">
       <section className="flex flex-col items-center  w-4/5 h-full gap-6">
-        <div className="flex flex-row items-center justify-between sticky top-16 w-full">
+        <header className="flex flex-row items-center justify-between sticky top-16 z-10 bg-background h-16 w-full border-b">
           <h2 className="text-3xl">Create a new flashcard set</h2>
           <div className="flex flex-row items-center justify-center gap-4">
             <Button leftIcon={<FaFileImport />} title="Import"></Button>
             <Button leftIcon={<FaPlus />} title="Create"></Button>
           </div>
-        </div>
+        </header>
         <div className="flex flex-col items-center justify-center w-full">
           <InputField
             icon={<MdOutlineTitle />}
@@ -103,48 +103,55 @@ function Page() {
           </div>
         </div>
 
-        <section className="flex flex-col items-center w-full overflow-y-auto gap-6 pb-6 bg-slate-300 rounded">
-          <div className="flex flex-row justify-between items-center w-full py-2 px-4">
-            <div className="text-xl font-bold">1</div>
-            <div className="flex flex-row items-center justify-center px-4 py-1 gap-2 bg-background/60 rounded-2xl">
-              <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
-                <FaFont />
-              </span>
-              <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
-                <IoColorFill />
-              </span>
-              <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
-                <AiFillAudio />
-              </span>
-            </div>
-            <div className="flex flex-row items-center justify-center py-1 gap-4">
-              <span className="rounded-sm cursor-grab hover:bg-background/30 p-1 transition-all duration-300">
-                <FaGripHorizontal />
-              </span>
-              <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
-                <FaTrash />
-              </span>
-            </div>
-          </div>
-          <div className="flex flex-row items-center justify-between w-full gap-4 px-4">
-            <InputField 
-              icon={<MdOutlineTitle />}
-              name="term"
-              type="text"
-              placeholder="Enter term"
-            />
-            <InputField 
-              icon={<MdSubtitles />}
-              name="definition"
-              type="text"
-              placeholder="Enter definition"
-            />
-            <div className="h-16 w-16 p-4 border-2 border-dotted flex flex-col items-center justify-center rounded cursor-pointer hover:text-blue-800 transition-all duration-300">
-              <FaImage />
-              <span className="text-xs">Image</span>
-            </div>
-          </div>
-        </section>
+        {cardSetDataList.map((card, index, cardList) => {
+          return (
+            <>
+              <section className="flex flex-col items-center w-full overflow-y-auto gap-6 pb-6 bg-slate-300 rounded">
+                <div className="flex flex-row justify-between items-center w-full py-2 px-4">
+                  <div className="text-xl font-bold">{index + 1}</div>
+                  <div className="flex flex-row items-center justify-center px-4 py-1 gap-2 bg-background/60 rounded-2xl">
+                    <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
+                      <FaFont />
+                    </span>
+                    <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
+                      <IoColorFill />
+                    </span>
+                    <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
+                      <AiFillAudio />
+                    </span>
+                  </div>
+                  <div className="flex flex-row items-center justify-center py-1 gap-4">
+                    <span className="rounded-sm cursor-grab hover:bg-background/30 p-1 transition-all duration-300">
+                      <FaGripHorizontal />
+                    </span>
+                    <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
+                      <FaTrash />
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-row items-center justify-between w-full gap-4 px-4">
+                  <InputField
+                    icon={<MdOutlineTitle />}
+                    name="term"
+                    type="text"
+                    placeholder="Enter term"
+                  />
+                  <InputField
+                    icon={<MdSubtitles />}
+                    name="definition"
+                    type="text"
+                    placeholder="Enter definition"
+                  />
+                  <div className="h-16 w-16 p-4 border-2 border-dotted flex flex-col items-center justify-center rounded cursor-pointer hover:text-blue-800 transition-all duration-300">
+                    <FaImage />
+                    <span className="text-xs">Image</span>
+                  </div>
+                </div>
+              </section>
+            </>
+          );
+        })}
+        
       </section>
     </main>
   );
