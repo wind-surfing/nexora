@@ -14,6 +14,7 @@ import { MdOutlineTitle, MdSubtitles } from "react-icons/md";
 import {
   FaFileImport,
   FaFont,
+  FaImage,
   FaKeyboard,
   FaPlus,
   FaTrash,
@@ -102,7 +103,7 @@ function Page() {
           </div>
         </div>
 
-        <section className="flex flex-col items-center w-full h-full overflow-y-auto gap-6 pb-6 bg-slate-300 rounded">
+        <section className="flex flex-col items-center w-full overflow-y-auto gap-6 pb-6 bg-slate-300 rounded">
           <div className="flex flex-row justify-between items-center w-full py-2 px-4">
             <div className="text-xl font-bold">1</div>
             <div className="flex flex-row items-center justify-center px-4 py-1 gap-2 bg-background/60 rounded-2xl">
@@ -123,6 +124,24 @@ function Page() {
               <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
                 <FaTrash />
               </span>
+            </div>
+          </div>
+          <div className="flex flex-row items-center justify-between w-full gap-4 px-4">
+            <InputField 
+              icon={<MdOutlineTitle />}
+              name="term"
+              type="text"
+              placeholder="Enter term"
+            />
+            <InputField 
+              icon={<MdSubtitles />}
+              name="definition"
+              type="text"
+              placeholder="Enter definition"
+            />
+            <div className="h-16 w-16 p-4 border-2 border-dotted flex flex-col items-center justify-center rounded cursor-pointer hover:text-blue-800 transition-all duration-300">
+              <FaImage />
+              <span className="text-xs">Image</span>
             </div>
           </div>
         </section>
