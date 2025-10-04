@@ -9,24 +9,31 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { IoCard, IoColorFill } from "react-icons/io5";
-import { AiFillAudio } from "react-icons/ai";
 import { MdOutlineTitle, MdSubtitles } from "react-icons/md";
 import {
   FaArrowDown,
   FaArrowUp,
   FaFileImport,
   FaFont,
-  FaImage,
   FaKeyboard,
+  FaLightbulb,
   FaPlus,
   FaTrash,
   FaWandMagicSparkles,
 } from "react-icons/fa6";
+import { GiChoice } from "react-icons/gi";
 import { IoMdSwap } from "react-icons/io";
 import React, { useState } from "react";
 import { Card, Cardset } from "@/types/cards";
 import { defaultCardSetDataList, singleCardSetData } from "@/config";
-import { FaGripHorizontal } from "react-icons/fa";
+import Dropzone from "@/components/ImageDropzone";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 function Page() {
   const [cardSetData, setCardSetData] = useState<Cardset>({
@@ -124,14 +131,128 @@ function Page() {
                   <div className="flex flex-row justify-between items-center w-full py-2 px-4">
                     <div className="text-xl font-bold">{index + 1}</div>
                     <div className="flex flex-row items-center justify-center px-4 py-1 gap-2 bg-background/60 rounded-2xl">
+                      <Popover>
+                        <PopoverTrigger className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
+                          <FaFont />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80">
+                          <div className="grid gap-4">
+                            <div className="space-y-2">
+                              <h4 className="leading-none font-medium">ALT</h4>
+                              <p className="text-muted-foreground text-sm">
+                                Provide a description for the image.
+                              </p>
+                            </div>
+                            <div className="grid gap-2">
+                              <div className="grid grid-cols-3 items-center gap-4">
+                                <Label htmlFor="alt">Alt</Label>
+                                <Input
+                                  id="alt"
+                                  type="text"
+                                  className="col-span-2 h-8"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                      <Popover>
+                        <PopoverTrigger className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
+                          <FaLightbulb />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80">
+                          <div className="grid gap-4">
+                            <div className="space-y-2">
+                              <h4 className="leading-none font-medium">Hint</h4>
+                              <p className="text-muted-foreground text-sm">
+                                Provide a hint for the card.
+                              </p>
+                            </div>
+                            <div className="grid gap-2">
+                              <div className="grid grid-cols-3 items-center gap-4">
+                                <Label htmlFor="hint">Hint</Label>
+                                <Input
+                                  id="hint"
+                                  type="text"
+                                  className="col-span-2 h-8"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                      <Popover>
+                        <PopoverTrigger className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
+                          <GiChoice />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80">
+                          <div className="grid gap-4">
+                            <div className="space-y-2">
+                              <h4 className="leading-none font-medium">
+                                Options
+                              </h4>
+                              <p className="text-muted-foreground text-sm">
+                                Provide options for the card definition.
+                              </p>
+                            </div>
+                            <div className="grid gap-2">
+                              <div className="grid grid-cols-3 items-center gap-4">
+                                <Label htmlFor="option-1">Option 1</Label>
+                                <Input
+                                  id="option-1"
+                                  type="text"
+                                  className="col-span-2 h-8"
+                                />
+                              </div>
+                              <div className="grid grid-cols-3 items-center gap-4">
+                                <Label htmlFor="option-2">Option 2</Label>
+                                <Input
+                                  id="option-2"
+                                  type="text"
+                                  className="col-span-2 h-8"
+                                />
+                              </div>
+                              <div className="grid grid-cols-3 items-center gap-4">
+                                <Label htmlFor="option-3">Option 3</Label>
+                                <Input
+                                  id="option-3"
+                                  type="text"
+                                  className="col-span-2 h-8"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                      <Popover>
+                        <PopoverTrigger className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
+                          <IoColorFill />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80">
+                          <div className="grid gap-4">
+                            <div className="space-y-2">
+                              <h4 className="leading-none font-medium">
+                                Theme
+                              </h4>
+                              <p className="text-muted-foreground text-sm">
+                                Provide a theme for the card.
+                              </p>
+                            </div>
+                            <div className="grid gap-2">
+                              <div className="grid grid-cols-3 items-center gap-4">
+                                <Label htmlFor="theme">Theme</Label>
+                                <Input
+                                  id="theme"
+                                  type="color"
+                                  className="col-span-2 h-8"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                       <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
-                        <FaFont />
-                      </span>
-                      <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
-                        <IoColorFill />
-                      </span>
-                      <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
-                        <AiFillAudio />
+                        <FaWandMagicSparkles />
                       </span>
                     </div>
                     <div className="flex flex-row items-center justify-center py-1 gap-4">
@@ -208,10 +329,7 @@ function Page() {
                         })
                       }
                     />
-                    <div className="h-16 w-16 p-4 border-2 border-dotted flex flex-col items-center justify-center rounded cursor-pointer hover:text-blue-800 transition-all duration-300">
-                      <FaImage />
-                      <span className="text-xs">Image</span>
-                    </div>
+                    <Dropzone></Dropzone>
                   </div>
                 </section>
                 <div className="w-full h-6 flex flex-row items-center justify-center group">
@@ -243,7 +361,7 @@ function Page() {
         </div>
 
         <div className="flex flex-row ml-auto gap-4">
-          <Button title="Cancel"></Button>
+          <Button title="Clear"></Button>
           <Button title="Save"></Button>
         </div>
       </section>
