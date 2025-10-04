@@ -1,21 +1,61 @@
-import React, { useCallback } from "react";
+import { getImageByPath, storeImage } from "@/helper/idb";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { FaImage } from "react-icons/fa6";
 
-export default function Dropzone() {
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    acceptedFiles.forEach((file) => {
-      const reader = new FileReader();
+export default function Dropzone({
+  data,
+  onChange,
+  uploadType,
+}: {
+  data: string[];
+  onChange: (src: string, e: File) => void;
+  uploadType: "single" | "multiple";
+}) {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-      reader.onabort = () => console.log("file reading was aborted");
-      reader.onerror = () => console.log("file reading has failed");
-      reader.onload = () => {
-        const binaryStr = reader.result;
-        console.log(binaryStr);
+  useEffect(() => {
+    const getImage = async () => {
+      if (data && data.length > 0 && data[0]) {
+        try {
+          const img = await getImageByPath(data[0], "dataUrl");
+          if (img && typeof img === "string") {
+            setImageUrl(img);
+          }
+        } catch (error) {
+          console.error("Error loading image:", error);
+          setImageUrl(null);
+        }
+      } else {
+        setImageUrl(null);
+      }
+    };
+
+    getImage();
+  }, [data]);
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const handleUpload = async (file: File) => {
+        try {
+          const url = await storeImage(file);
+          if (url) {
+            onChange?.(url, file);
+          }
+        } catch (error) {
+          console.error("Error uploading image:", error);
+        }
       };
-      reader.readAsArrayBuffer(file);
-    });
-  }, []);
+
+      if (uploadType === "single") {
+        if (acceptedFiles.length > 0) {
+          handleUpload(acceptedFiles[0]);
+        }
+      } else {
+        acceptedFiles.forEach(handleUpload);
+      }
+    },
+    [onChange, uploadType]
+  );
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
@@ -24,9 +64,20 @@ export default function Dropzone() {
       {...getRootProps()}
     >
       <input {...getInputProps()} />
-      <FaImage />
-
-      <p className="text-xs">Image</p>
+      {imageUrl ? (
+        <div className="w-16 h-16 p-8 relative overflow-hidden flex flex-row items-center justify-center">
+          <img
+            src={imageUrl}
+            alt="Uploaded"
+            className="w-full h-full object-cover absolute inset-0 rounded"
+          />
+        </div>
+      ) : (
+        <>
+          <FaImage />
+          <p className="text-xs">Image</p>
+        </>
+      )}
     </div>
   );
 }

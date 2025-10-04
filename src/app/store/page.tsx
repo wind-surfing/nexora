@@ -24,7 +24,7 @@ import {
 import { GiChoice } from "react-icons/gi";
 import { IoMdSwap } from "react-icons/io";
 import React, { useState } from "react";
-import { Card, Cardset } from "@/types/cards";
+import { Card, Cardset, CompoundCard } from "@/types/cards";
 import { defaultCardSetDataList, shortcuts, singleCardSetData } from "@/config";
 import Dropzone from "@/components/ImageDropzone";
 import {
@@ -45,9 +45,12 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import { se } from "date-fns/locale";
+import { toast } from "sonner";
+import { storeCompoundCard } from "@/helper/idb";
+import { useRouter } from "next/navigation";
 
 function Page() {
+  const router = useRouter();
   const [cardSetData, setCardSetData] = useState<Cardset>({
     idea: "",
     description: "",
@@ -61,9 +64,44 @@ function Page() {
     setCardSetData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (cardSetData.idea.trim() === "") {
+      toast.error("Set idea cannot be empty!");
+      return;
+    }
+    if (cardSetData.description.trim() === "") {
+      toast.error("Set description cannot be empty!");
+      return;
+    }
+
+    const compoundCard: CompoundCard = {
+      idea: cardSetData.idea,
+      description: cardSetData.description,
+      cards: cardSetDataList,
+    };
+
+    if (compoundCard.cards.length === 0) {
+      toast.error("Add at least one card!");
+      return;
+    } else {
+      try {
+        await storeCompoundCard(compoundCard);
+        toast.success("Flashcard set created!");
+        router.push("/home");
+      } catch (error) {
+        toast.error("Failed to create flashcard set");
+      }
+    }
+  };
+
   return (
     <main className="flex flex-row items-center justify-center w-full py-16 px-4">
-      <section className="flex flex-col items-center  w-4/5 h-full gap-6">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col items-center  w-4/5 h-full gap-6"
+      >
         <header className="flex flex-row items-center justify-between sticky top-16 z-20 bg-background h-16 w-full border-b">
           <h2 className="text-3xl">Create a new flashcard set</h2>
           <div className="flex flex-row items-center justify-center gap-4">
@@ -416,7 +454,17 @@ function Page() {
                         })
                       }
                     />
-                    <Dropzone></Dropzone>
+                    <Dropzone
+                      data={[card.src]}
+                      onChange={(url) =>
+                        setCardSetDataList((prev) => {
+                          const newArray = [...prev];
+                          newArray[index].src = url;
+                          return newArray;
+                        })
+                      }
+                      uploadType="single"
+                    ></Dropzone>
                   </div>
                 </section>
                 <div className="w-full h-6 flex flex-row items-center justify-center group">
@@ -465,9 +513,9 @@ function Page() {
             }
             title="Clear"
           ></Button>
-          <Button title="Save"></Button>
+          <Button type="submit" title="Save"></Button>
         </div>
-      </section>
+      </form>
     </main>
   );
 }

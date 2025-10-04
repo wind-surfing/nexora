@@ -13,3 +13,9 @@ export interface Card {
   theme: string;
   category: string;
 }
+
+export interface CompoundCard {
+  idea: string;
+  description: string;
+  cards: Card[];
+}
