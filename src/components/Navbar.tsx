@@ -14,9 +14,9 @@ function Navbar() {
             </li>
             <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform"></span>
           </Link>
-          <Link href={"/store"} className="relative group">
+          <Link href={"/create"} className="relative group">
             <li className="flex flex-row items-center justify-center hover:text-primary">
-              Store
+              Create
             </li>
             <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform"></span>
           </Link>

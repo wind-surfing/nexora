@@ -106,7 +106,7 @@ function Page() {
           <h2 className="text-3xl">Create a new flashcard set</h2>
           <div className="flex flex-row items-center justify-center gap-4">
             <Button leftIcon={<FaFileImport />} title="Import"></Button>
-            <Button leftIcon={<FaPlus />} title="Create"></Button>
+            <Button leftIcon={<FaPlus />} type="submit" title="Create"></Button>
           </div>
         </header>
         <div className="flex flex-col items-center justify-center w-full">
@@ -513,7 +513,7 @@ function Page() {
             }
             title="Clear"
           ></Button>
-          <Button type="submit" title="Save"></Button>
+          <Button type="submit" title="Create"></Button>
         </div>
       </form>
     </main>
