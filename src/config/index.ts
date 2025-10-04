@@ -52,3 +52,61 @@ export const singleCardSetData: Card = {
   theme: "",
   category: "",
 };
+
+export const shortcuts = [
+  {
+    category: "Externals" as string,
+    shorts: [
+      {
+        key: "Ctrl + I",
+        action: "Import",
+      },
+      {
+        key: "Ctrl + E",
+        action: "Export",
+      },
+    ] as { key: string; action: string }[],
+  },
+  {
+    category: "Utils" as string,
+    shorts: [
+      {
+        key: "Ctrl + P",
+        action: "Practise",
+      },
+      {
+        key: "Ctrl + T",
+        action: "Suggestions",
+      },
+      {
+        key: "Ctrl + K",
+        action: "Keyboard",
+      },
+      {
+        key: "Ctrl + M",
+        action: "AI",
+      },
+      {
+        key: "Ctrl + F",
+        action: "Flip",
+      },
+    ] as { key: string; action: string }[],
+  },
+  {
+    category: "Actions" as string,
+    shorts: [
+      {
+        key: "Ctrl + N",
+        action: "Add",
+      },
+      {
+        key: "Ctrl + S",
+        action: "Save",
+      },
+      {
+        key: "Ctrl + C",
+        action: "Clear",
+      },
+    ] as { key: string; action: string }[],
+  },
+];

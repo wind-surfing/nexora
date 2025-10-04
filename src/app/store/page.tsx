@@ -25,7 +25,7 @@ import { GiChoice } from "react-icons/gi";
 import { IoMdSwap } from "react-icons/io";
 import React, { useState } from "react";
 import { Card, Cardset } from "@/types/cards";
-import { defaultCardSetDataList, singleCardSetData } from "@/config";
+import { defaultCardSetDataList, shortcuts, singleCardSetData } from "@/config";
 import Dropzone from "@/components/ImageDropzone";
 import {
   Popover,
@@ -34,6 +34,17 @@ import {
 } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarShortcut,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
 
 function Page() {
   const [cardSetData, setCardSetData] = useState<Cardset>({
@@ -85,14 +96,38 @@ function Page() {
             <span className="flex flex-row items-center justify-center gap-2">
               Suggestions <Switch className="cursor-pointer" />
             </span>
-            <Tooltip>
-              <TooltipTrigger className="flex flex-row items-center justify-center p-2 h-10 w-10 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer">
-                <FaKeyboard />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>See Shortcuts</p>
-              </TooltipContent>
-            </Tooltip>
+            <Menubar className="border-none shadow-none">
+              <MenubarMenu>
+                <MenubarTrigger className="flex flex-row items-center justify-center p-2 h-10 w-10 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer">
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <FaKeyboard />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>See Shortcuts</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </MenubarTrigger>
+                <MenubarContent>
+                  {shortcuts.map((shortcut) => (
+                    <MenubarSub key={shortcut.category}>
+                      <MenubarSubTrigger>{shortcut.category}</MenubarSubTrigger>
+                      <MenubarSubContent>
+                        {shortcut.shorts.map((s) => (
+                          <MenubarItem key={s.key}>
+                            {s.action}
+                            <MenubarShortcut key={s.key}>
+                              {s.key}
+                            </MenubarShortcut>
+                          </MenubarItem>
+                        ))}
+                      </MenubarSubContent>
+                    </MenubarSub>
+                  ))}
+                </MenubarContent>
+              </MenubarMenu>
+            </Menubar>
+
             <Tooltip>
               <TooltipTrigger className="flex flex-row items-center justify-center p-2 h-10 w-10 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer">
                 <FaWandMagicSparkles />
