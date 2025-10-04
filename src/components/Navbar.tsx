@@ -5,7 +5,7 @@ import Link from "next/link";
 
 function Navbar() {
   return (
-    <header className="w-full px-4 flex flex-row items-center justify-between sticky top-0 bg-background z-20 h-16 border-b">
+    <header className="w-full px-4 flex flex-row items-center justify-between sticky top-0 bg-background z-30 h-16 border-b">
       <nav>
         <ul className="flex flex-row items-center gap-6">
           <Link href={"/home"} className="relative group">

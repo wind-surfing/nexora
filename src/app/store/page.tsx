@@ -43,7 +43,7 @@ function Page() {
   return (
     <main className="flex flex-row items-center justify-center w-full py-16 px-4">
       <section className="flex flex-col items-center  w-4/5 h-full gap-6">
-        <header className="flex flex-row items-center justify-between sticky top-16 z-10 bg-background h-16 w-full border-b">
+        <header className="flex flex-row items-center justify-between sticky top-16 z-20 bg-background h-16 w-full border-b">
           <h2 className="text-3xl">Create a new flashcard set</h2>
           <div className="flex flex-row items-center justify-center gap-4">
             <Button leftIcon={<FaFileImport />} title="Import"></Button>
@@ -157,6 +157,15 @@ function Page() {
               </>
             );
           })}
+        </div>
+
+        <div className="flex flex-row items-center justify-center p-4">
+          <Button title="Add a Card"></Button>
+        </div>
+
+        <div className="flex flex-row ml-auto gap-4">
+          <Button title="Cancel"></Button>
+          <Button title="Save"></Button>
         </div>
       </section>
     </main>
