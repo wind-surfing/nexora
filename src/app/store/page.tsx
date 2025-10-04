@@ -12,6 +12,8 @@ import { IoCard, IoColorFill } from "react-icons/io5";
 import { AiFillAudio } from "react-icons/ai";
 import { MdOutlineTitle, MdSubtitles } from "react-icons/md";
 import {
+  FaArrowDown,
+  FaArrowUp,
   FaFileImport,
   FaFont,
   FaImage,
@@ -23,7 +25,7 @@ import {
 import { IoMdSwap } from "react-icons/io";
 import React, { useState } from "react";
 import { Card, Cardset } from "@/types/cards";
-import { defaultCardSetDataList } from "@/config";
+import { defaultCardSetDataList, singleCardSetData } from "@/config";
 import { FaGripHorizontal } from "react-icons/fa";
 
 function Page() {
@@ -93,7 +95,18 @@ function Page() {
               </TooltipContent>
             </Tooltip>
             <Tooltip>
-              <TooltipTrigger className="flex flex-row items-center justify-center p-2 h-10 w-10 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer">
+              <TooltipTrigger
+                onClick={() => {
+                  setCardSetDataList((prev) =>
+                    prev.map((card) => ({
+                      ...card,
+                      term: card.definition,
+                      definition: card.term,
+                    }))
+                  );
+                }}
+                className="flex flex-row items-center justify-center p-2 h-10 w-10 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer"
+              >
                 <IoMdSwap />
               </TooltipTrigger>
               <TooltipContent>
@@ -122,10 +135,46 @@ function Page() {
                       </span>
                     </div>
                     <div className="flex flex-row items-center justify-center py-1 gap-4">
-                      <span className="rounded-sm cursor-grab hover:bg-background/30 p-1 transition-all duration-300">
-                        <FaGripHorizontal />
+                      <span
+                        onClick={() =>
+                          setCardSetDataList((prev) => {
+                            const newArray = [...prev];
+                            newArray.splice(
+                              index - 1,
+                              0,
+                              newArray.splice(index, 1)[0]
+                            );
+                            return newArray;
+                          })
+                        }
+                        className="rounded-sm cursor-grab hover:bg-background/30 p-1 transition-all duration-300"
+                      >
+                        <FaArrowUp />
                       </span>
-                      <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
+                      <span
+                        onClick={() =>
+                          setCardSetDataList((prev) => {
+                            const newArray = [...prev];
+                            newArray.splice(
+                              index + 1,
+                              0,
+                              newArray.splice(index, 1)[0]
+                            );
+                            return newArray;
+                          })
+                        }
+                        className="rounded-sm cursor-grab hover:bg-background/30 p-1 transition-all duration-300"
+                      >
+                        <FaArrowDown />
+                      </span>
+                      <span
+                        onClick={() =>
+                          setCardSetDataList(
+                            cardList.filter((_, i) => i !== index)
+                          )
+                        }
+                        className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300"
+                      >
                         <FaTrash />
                       </span>
                     </div>
@@ -136,12 +185,28 @@ function Page() {
                       name="term"
                       type="text"
                       placeholder="Enter term"
+                      value={card.term}
+                      onChange={(value) =>
+                        setCardSetDataList((prev) => {
+                          const newArray = [...prev];
+                          newArray[index].term = value;
+                          return newArray;
+                        })
+                      }
                     />
                     <InputField
                       icon={<MdSubtitles />}
                       name="definition"
                       type="text"
                       placeholder="Enter definition"
+                      value={card.definition}
+                      onChange={(value) =>
+                        setCardSetDataList((prev) => {
+                          const newArray = [...prev];
+                          newArray[index].definition = value;
+                          return newArray;
+                        })
+                      }
                     />
                     <div className="h-16 w-16 p-4 border-2 border-dotted flex flex-col items-center justify-center rounded cursor-pointer hover:text-blue-800 transition-all duration-300">
                       <FaImage />
@@ -150,7 +215,16 @@ function Page() {
                   </div>
                 </section>
                 <div className="w-full h-6 flex flex-row items-center justify-center group">
-                  <span className="h-8 w-8 rounded-full bg-primary text-white border flex flex-row items-center justify-center cursor-pointer group-hover:scale-100 scale-0 transition-all duration-300">
+                  <span
+                    onClick={() =>
+                      setCardSetDataList((prev) => {
+                        const newArray = [...prev];
+                        newArray.splice(index + 1, 0, singleCardSetData);
+                        return newArray;
+                      })
+                    }
+                    className="h-8 w-8 rounded-full bg-primary text-white border flex flex-row items-center justify-center cursor-pointer group-hover:scale-100 scale-0 transition-all duration-300"
+                  >
                     <FaPlus></FaPlus>
                   </span>
                 </div>
@@ -160,7 +234,12 @@ function Page() {
         </div>
 
         <div className="flex flex-row items-center justify-center p-4">
-          <Button title="Add a Card"></Button>
+          <Button
+            onClick={() =>
+              setCardSetDataList((prev) => [...prev, singleCardSetData])
+            }
+            title="Add a Card"
+          ></Button>
         </div>
 
         <div className="flex flex-row ml-auto gap-4">

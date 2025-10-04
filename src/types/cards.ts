@@ -4,12 +4,8 @@ export interface Cardset {
 }
 
 export interface Card {
-  front: {
-    term: string;
-  };
-  back: {
-    definition: string;
-  };
+  term: string;
+  definition: string;
   src: string;
   alt: string;
   options: string[];

@@ -1,15 +1,10 @@
 [
   {
-    "front": {
-      "term": "",
-      "src": "",
-      "alt": ""
-    },
-    "back": {
-      "definition": "",
-      "src": "",
-      "alt": ""
-    },
+    "term": "",
+    "definition": "",
+    "src": "",
+    "alt": "",
+    "options": [],
     "hint": "",
     "theme": "",
     "category": ""

@@ -21,12 +21,8 @@ export const credentials = [
 
 export const defaultCardSetDataList: Card[] = [
   {
-    front: {
-      term: "",
-    },
-    back: {
-      definition: "",
-    },
+    term: "",
+    definition: "",
     src: "",
     alt: "",
     options: [] as string[],
@@ -35,12 +31,8 @@ export const defaultCardSetDataList: Card[] = [
     category: "",
   },
   {
-    front: {
-      term: "",
-    },
-    back: {
-      definition: "",
-    },
+    term: "",
+    definition: "",
     src: "",
     alt: "",
     options: [] as string[],
@@ -51,12 +43,8 @@ export const defaultCardSetDataList: Card[] = [
 ];
 
 export const singleCardSetData: Card = {
-  front: {
-    term: "",
-  },
-  back: {
-    definition: "",
-  },
+  term: "",
+  definition: "",
   src: "",
   alt: "",
   options: [] as string[],
