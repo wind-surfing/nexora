@@ -16,3 +16,36 @@ export const credentials = [
     coins: 1000,
   },
 ];
+
+export const defaultCardSetDataList = [
+  {
+    front: {
+      term: "",
+      src: "",
+      alt: "",
+    },
+    back: {
+      definition: "",
+      src: "",
+      alt: "",
+    },
+    hint: "",
+    theme: "",
+    category: "",
+  },
+  {
+    front: {
+      term: "",
+      src: "",
+      alt: "",
+    },
+    back: {
+      definition: "",
+      src: "",
+      alt: "",
+    },
+    hint: "",
+    theme: "",
+    category: "",
+  },
+];

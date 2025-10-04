@@ -8,17 +8,22 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { IoCard } from "react-icons/io5";
+import { IoCard, IoColorFill } from "react-icons/io5";
+import { AiFillAudio } from "react-icons/ai";
 import { MdOutlineTitle, MdSubtitles } from "react-icons/md";
 import {
   FaFileImport,
+  FaFont,
   FaKeyboard,
   FaPlus,
+  FaTrash,
   FaWandMagicSparkles,
 } from "react-icons/fa6";
 import { IoMdSwap } from "react-icons/io";
 import React, { useState } from "react";
 import { Card, Cardset } from "@/types/cards";
+import { defaultCardSetDataList } from "@/config";
+import { FaGripHorizontal } from "react-icons/fa";
 
 function Page() {
   const [cardSetData, setCardSetData] = useState<Cardset>({
@@ -26,7 +31,9 @@ function Page() {
     description: "",
   });
 
-  const [cardSetDataList, setCardSetDataList] = useState<Card[]>([]);
+  const [cardSetDataList, setCardSetDataList] = useState<Card[]>(
+    defaultCardSetDataList
+  );
 
   const handleChange = (value: string, field: "idea" | "description") => {
     setCardSetData((prev) => ({ ...prev, [field]: value }));
@@ -94,6 +101,31 @@ function Page() {
             </Tooltip>
           </div>
         </div>
+
+        <section className="flex flex-col items-center w-full h-full overflow-y-auto gap-6 pb-6 bg-slate-300 rounded">
+          <div className="flex flex-row justify-between items-center w-full py-2 px-4">
+            <div className="text-xl font-bold">1</div>
+            <div className="flex flex-row items-center justify-center px-4 py-1 gap-2 bg-background/60 rounded-2xl">
+              <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
+                <FaFont />
+              </span>
+              <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
+                <IoColorFill />
+              </span>
+              <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
+                <AiFillAudio />
+              </span>
+            </div>
+            <div className="flex flex-row items-center justify-center py-1 gap-4">
+              <span className="rounded-sm cursor-grab hover:bg-background/30 p-1 transition-all duration-300">
+                <FaGripHorizontal />
+              </span>
+              <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
+                <FaTrash />
+              </span>
+            </div>
+          </div>
+        </section>
       </section>
     </main>
   );
