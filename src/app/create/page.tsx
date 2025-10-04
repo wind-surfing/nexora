@@ -48,6 +48,7 @@ import {
 import { toast } from "sonner";
 import { storeCompoundCard } from "@/helper/idb";
 import { useRouter } from "next/navigation";
+import createFlashcards from "@/lib/generateFlashcards";
 
 function Page() {
   const router = useRouter();
@@ -139,7 +140,7 @@ function Page() {
               <MenubarMenu>
                 <MenubarTrigger className="flex flex-row items-center justify-center p-2 h-10 w-10 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer">
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger type="button">
                       <FaKeyboard />
                     </TooltipTrigger>
                     <TooltipContent>
@@ -168,7 +169,21 @@ function Page() {
             </Menubar>
 
             <Tooltip>
-              <TooltipTrigger className="flex flex-row items-center justify-center p-2 h-10 w-10 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer">
+              <TooltipTrigger
+                type="button"
+                onClick={async () => {
+                  const generatedContent = await createFlashcards(
+                    [""],
+                    {
+                      idea: cardSetData.idea,
+                      description: cardSetData.description,
+                    },
+                    (loading: boolean) => {}
+                  );
+                  console.log("Generated Content: ", generatedContent);
+                }}
+                className="flex flex-row items-center justify-center p-2 h-10 w-10 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer"
+              >
                 <FaWandMagicSparkles />
               </TooltipTrigger>
               <TooltipContent>
@@ -177,6 +192,7 @@ function Page() {
             </Tooltip>
             <Tooltip>
               <TooltipTrigger
+                type="button"
                 onClick={() => {
                   setCardSetDataList((prev) =>
                     prev.map((card) => ({
