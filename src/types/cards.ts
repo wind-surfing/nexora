@@ -8,7 +8,7 @@ export interface Card {
   definition: string;
   src: string;
   alt: string;
-  options: string[];
+  options: [string, string, string];
   hint: string;
   theme: string;
   category: string;

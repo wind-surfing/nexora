@@ -8,7 +8,7 @@ Here's are the relevant structure of the json format:
     "definition": "",
     "src": "",
     "alt": "",
-    "options": [], // string[]
+    "options": ["", "", ""], // [string, string, string]
     "hint": "",
     "theme": "",
     "category": ""

@@ -162,7 +162,10 @@ function Page() {
           {cardSetDataList.map((card, index, cardList) => {
             return (
               <>
-                <section className="flex flex-col items-center w-full overflow-y-auto gap-6 bg-slate-300 rounded">
+                <section
+                  key={index}
+                  className="flex flex-col items-center w-full overflow-y-auto gap-6 bg-slate-300 rounded"
+                >
                   <div className="flex flex-row justify-between items-center w-full py-2 px-4">
                     <div className="text-xl font-bold">{index + 1}</div>
                     <div className="flex flex-row items-center justify-center px-4 py-1 gap-2 bg-background/60 rounded-2xl">
@@ -185,6 +188,14 @@ function Page() {
                                   id="alt"
                                   type="text"
                                   className="col-span-2 h-8"
+                                  value={card.alt}
+                                  onChange={({ target: { value } }) =>
+                                    setCardSetDataList((prev) => {
+                                      const newArray = [...prev];
+                                      newArray[index].alt = value;
+                                      return newArray;
+                                    })
+                                  }
                                 />
                               </div>
                             </div>
@@ -210,6 +221,14 @@ function Page() {
                                   id="hint"
                                   type="text"
                                   className="col-span-2 h-8"
+                                  value={card.hint}
+                                  onChange={({ target: { value } }) =>
+                                    setCardSetDataList((prev) => {
+                                      const newArray = [...prev];
+                                      newArray[index].hint = value;
+                                      return newArray;
+                                    })
+                                  }
                                 />
                               </div>
                             </div>
@@ -237,6 +256,14 @@ function Page() {
                                   id="option-1"
                                   type="text"
                                   className="col-span-2 h-8"
+                                  value={card.options[0]}
+                                  onChange={({ target: { value } }) =>
+                                    setCardSetDataList((prev) => {
+                                      const newArray = [...prev];
+                                      newArray[index].options[0] = value;
+                                      return newArray;
+                                    })
+                                  }
                                 />
                               </div>
                               <div className="grid grid-cols-3 items-center gap-4">
@@ -245,6 +272,14 @@ function Page() {
                                   id="option-2"
                                   type="text"
                                   className="col-span-2 h-8"
+                                  value={card.options[1]}
+                                  onChange={({ target: { value } }) =>
+                                    setCardSetDataList((prev) => {
+                                      const newArray = [...prev];
+                                      newArray[index].options[1] = value;
+                                      return newArray;
+                                    })
+                                  }
                                 />
                               </div>
                               <div className="grid grid-cols-3 items-center gap-4">
@@ -253,6 +288,14 @@ function Page() {
                                   id="option-3"
                                   type="text"
                                   className="col-span-2 h-8"
+                                  value={card.options[2]}
+                                  onChange={({ target: { value } }) =>
+                                    setCardSetDataList((prev) => {
+                                      const newArray = [...prev];
+                                      newArray[index].options[2] = value;
+                                      return newArray;
+                                    })
+                                  }
                                 />
                               </div>
                             </div>
@@ -261,7 +304,7 @@ function Page() {
                       </Popover>
                       <Popover>
                         <PopoverTrigger className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
-                          <IoColorFill />
+                          <IoColorFill color={card.theme} />
                         </PopoverTrigger>
                         <PopoverContent className="w-80">
                           <div className="grid gap-4">
@@ -280,6 +323,14 @@ function Page() {
                                   id="theme"
                                   type="color"
                                   className="col-span-2 h-8"
+                                  value={card.theme}
+                                  onChange={({ target: { value } }) =>
+                                    setCardSetDataList((prev) => {
+                                      const newArray = [...prev];
+                                      newArray[index].theme = value;
+                                      return newArray;
+                                    })
+                                  }
                                 />
                               </div>
                             </div>
