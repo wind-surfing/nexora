@@ -45,6 +45,7 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar";
+import { se } from "date-fns/locale";
 
 function Page() {
   const [cardSetData, setCardSetData] = useState<Cardset>({
@@ -447,7 +448,23 @@ function Page() {
         </div>
 
         <div className="flex flex-row ml-auto gap-4">
-          <Button title="Clear"></Button>
+          <Button
+            onClick={() =>
+              setCardSetDataList((prev) =>
+                prev.map(() => ({
+                  term: "",
+                  definition: "",
+                  src: "",
+                  alt: "",
+                  options: ["", "", ""],
+                  hint: "",
+                  theme: "",
+                  category: "",
+                }))
+              )
+            }
+            title="Clear"
+          ></Button>
           <Button title="Save"></Button>
         </div>
       </section>
