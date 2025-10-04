@@ -1,3 +1,5 @@
+import { Card } from "@/types/cards";
+
 export const credentials = [
   {
     username: "user",
@@ -17,18 +19,17 @@ export const credentials = [
   },
 ];
 
-export const defaultCardSetDataList = [
+export const defaultCardSetDataList: Card[] = [
   {
     front: {
       term: "",
-      src: "",
-      alt: "",
     },
     back: {
       definition: "",
-      src: "",
-      alt: "",
     },
+    src: "",
+    alt: "",
+    options: [] as string[],
     hint: "",
     theme: "",
     category: "",
@@ -36,16 +37,30 @@ export const defaultCardSetDataList = [
   {
     front: {
       term: "",
-      src: "",
-      alt: "",
     },
     back: {
       definition: "",
-      src: "",
-      alt: "",
     },
+    src: "",
+    alt: "",
+    options: [] as string[],
     hint: "",
     theme: "",
     category: "",
   },
 ];
+
+export const singleCardSetData: Card = {
+  front: {
+    term: "",
+  },
+  back: {
+    definition: "",
+  },
+  src: "",
+  alt: "",
+  options: [] as string[],
+  hint: "",
+  theme: "",
+  category: "",
+};

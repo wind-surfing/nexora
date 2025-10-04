@@ -6,14 +6,13 @@ export interface Cardset {
 export interface Card {
   front: {
     term: string;
-    src: string;
-    alt?: string;
   };
   back: {
     definition: string;
-    src: string;
-    alt?: string;
   };
+  src: string;
+  alt: string;
+  options: string[];
   hint: string;
   theme: string;
   category: string;
