@@ -9,6 +9,6 @@ Nexora is one of the if not the best flashcard learning application which allows
 - Granular control on data, since every thing is stored in idb
 - Modular customizations, from alt, imgs, hints, options, theme, term, definition
 - Swap the term and definition
+- Import & Export
 - Keyboard shortcuts (pending)
-- Import & Export (pending)
 - Playing (pending)

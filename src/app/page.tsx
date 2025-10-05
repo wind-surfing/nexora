@@ -1,3 +1,5 @@
+"use client";
+
 import Button from "@/components/shared/Button";
 import Image from "next/image";
 

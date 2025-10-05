@@ -13,7 +13,7 @@ import { MdOutlineTitle, MdSubtitles } from "react-icons/md";
 import {
   FaArrowDown,
   FaArrowUp,
-  FaFileImport,
+  FaFileExport,
   FaFont,
   FaKeyboard,
   FaLightbulb,
@@ -55,6 +55,7 @@ import {
 import { useRouter } from "next/navigation";
 import createFlashcards from "@/lib/generateFlashcards";
 import createFlashcard from "@/lib/generateFlashcard";
+import FileDropzone from "@/components/FileDropzone";
 
 function Page() {
   const router = useRouter();
@@ -187,6 +188,63 @@ function Page() {
     }
   };
 
+  const handleImport = async (file: File) => {
+    if (!file) {
+      toast.error("No file selected");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      try {
+        const jsonString = event.target?.result as string;
+        const jsonObject = JSON.parse(jsonString) as CompoundCard;
+        if (!jsonObject.idea || !jsonObject.description || !jsonObject.cards) {
+          toast.error("Invalid flashcard set format");
+          return;
+        }
+        if (jsonObject.idea && jsonObject.description) {
+          setCardSetData({
+            idea: jsonObject.idea,
+            description: jsonObject.description,
+          });
+        }
+        if (jsonObject.cards.length > 0) {
+          setCardSetDataList((prev) => [...prev, ...jsonObject.cards]);
+        }
+
+        toast.success("Flashcard set imported!");
+      } catch (error) {
+        toast.error("Failed to read file");
+      }
+    };
+
+    reader.readAsText(file);
+  };
+
+  const handleExport = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    const compoundCard: CompoundCard = {
+      idea: cardSetData.idea,
+      description: cardSetData.description,
+      cards: cardSetDataList,
+    };
+
+    const blob = new Blob([JSON.stringify(compoundCard)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${cardSetData.idea || "flashcard-set"}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    toast.success("Flashcard set exported!");
+  };
+
   return (
     <main className="flex flex-row items-center justify-center w-full py-16 px-4">
       <form
@@ -196,8 +254,13 @@ function Page() {
         <header className="flex flex-row items-center justify-between sticky top-16 z-20 bg-background h-16 w-full border-b">
           <h2 className="text-3xl">Create a new flashcard set</h2>
           <div className="flex flex-row items-center justify-center gap-4">
-            <Button leftIcon={<FaFileImport />} title="Import"></Button>
-            <Button leftIcon={<FaPlus />} type="submit" title="Create"></Button>
+            <FileDropzone onChange={(file) => handleImport(file)} />
+            <Button
+              onClick={handleExport}
+              leftIcon={<FaFileExport />}
+              type="button"
+              title="Export"
+            ></Button>
           </div>
         </header>
         <div className="flex flex-col items-center justify-center w-full">
@@ -220,7 +283,11 @@ function Page() {
         </div>
         <div className="flex flex-row items-center justify-between w-full gap-4">
           <div className="flex flex-row items-center justify-center gap-4">
-            <Button leftIcon={<IoCard />} title="Practice Flashcard"></Button>
+            <Button
+              type="button"
+              leftIcon={<IoCard />}
+              title="Practice Flashcard"
+            ></Button>
           </div>
           <div className="flex flex-row items-center justify-center gap-4">
             <span className="flex flex-row items-center justify-center gap-2">
@@ -284,6 +351,7 @@ function Page() {
                   <div className="grid gap-2">
                     <div className="grid grid-cols-3 items-center gap-4">
                       <Button
+                        type="button"
                         onClick={(e) => handleGenerateFlashcards(e)}
                         title="Confirm"
                       ></Button>
@@ -524,6 +592,7 @@ function Page() {
                             <div className="grid gap-2">
                               <div className="grid grid-cols-3 items-center gap-4">
                                 <Button
+                                  type="button"
                                   onClick={(e) =>
                                     handleGenerateFlashcard(e, index)
                                   }
@@ -643,6 +712,7 @@ function Page() {
 
         <div className="flex flex-row items-center justify-center p-4">
           <Button
+            type="button"
             onClick={() =>
               setCardSetDataList((prev) => [...prev, singleCardSetData])
             }
@@ -652,6 +722,7 @@ function Page() {
 
         <div className="flex flex-row ml-auto gap-4">
           <Button
+            type="button"
             onClick={() =>
               setCardSetDataList((prev) =>
                 prev.map(() => ({
