@@ -197,7 +197,9 @@ export const clearCredentials = async (): Promise<boolean> => {
 };
 
 export const updateCurrentUser = async (
-  updates: Partial<Omit<UserCredentials, "password">> & { password?: string }
+  updatesOrNexoins:
+    | number
+    | (Partial<Omit<UserCredentials, "password">> & { password?: string })
 ): Promise<boolean> => {
   try {
     const db = await initDB();
@@ -214,10 +216,22 @@ export const updateCurrentUser = async (
           return;
         }
 
-        const updatedData = { ...existingCredentials, ...updates };
+        let updatedData: typeof existingCredentials;
 
-        if (updates.password) {
-          updatedData.password = await hashPassword(updates.password);
+        if (typeof updatesOrNexoins === "number") {
+          const currentNexoins = existingCredentials.nexoins || 0;
+          updatedData = {
+            ...existingCredentials,
+            nexoins: currentNexoins + updatesOrNexoins,
+          };
+        } else {
+          updatedData = { ...existingCredentials, ...updatesOrNexoins };
+
+          if (updatesOrNexoins.password) {
+            updatedData.password = await hashPassword(
+              updatesOrNexoins.password
+            );
+          }
         }
 
         const putRequest = store.put(updatedData);

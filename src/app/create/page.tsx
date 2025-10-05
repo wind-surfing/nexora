@@ -47,7 +47,11 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { toast } from "sonner";
-import { getAllImages, storeCompoundCard } from "@/helper/idb";
+import {
+  getAllImages,
+  storeCompoundCard,
+  updateCurrentUser,
+} from "@/helper/idb";
 import { useRouter } from "next/navigation";
 import createFlashcards from "@/lib/generateFlashcards";
 import createFlashcard from "@/lib/generateFlashcard";
@@ -121,6 +125,7 @@ function Page() {
     try {
       const response = await createFlashcards(images, cardSetData);
       if (response) {
+        await updateCurrentUser(-10);
         setCardSetDataList((prev) => [...prev, ...response]);
       } else {
         toast.error("Failed to get flashcards");
@@ -164,6 +169,7 @@ function Page() {
       });
 
       if (response) {
+        await updateCurrentUser(-10);
         setCardSetDataList((prev) => {
           const newArray = [...prev];
           newArray[index] = response;
