@@ -18,6 +18,7 @@ import {
   FaKeyboard,
   FaLightbulb,
   FaPlus,
+  FaSpinner,
   FaTrash,
   FaWandMagicSparkles,
 } from "react-icons/fa6";
@@ -56,6 +57,7 @@ function Page() {
     idea: "",
     description: "",
   });
+  const [mainLoading, setMainLoading] = useState(false);
 
   const [cardSetDataList, setCardSetDataList] = useState<Card[]>(
     defaultCardSetDataList
@@ -114,10 +116,8 @@ function Page() {
     }
 
     try {
-      const response = await createFlashcards(
-        images,
-        cardSetData,
-        (bool) => true
+      const response = await createFlashcards(images, cardSetData, (boolean) =>
+        setMainLoading(boolean)
       );
       if (response) {
         setCardSetDataList((prev) => [...prev, ...response]);
@@ -202,18 +202,41 @@ function Page() {
               </MenubarMenu>
             </Menubar>
 
-            <Tooltip>
-              <TooltipTrigger
-                type="button"
-                onClick={(e) => handleGenerateFlashcards(e)}
-                className="flex flex-row items-center justify-center p-2 h-10 w-10 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer"
-              >
-                <FaWandMagicSparkles />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Generate with AI</p>
-              </TooltipContent>
-            </Tooltip>
+            <Popover>
+              <PopoverTrigger className="flex flex-row items-center justify-center p-2 h-10 w-10 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer">
+                <Tooltip>
+                  <TooltipTrigger type="button">
+                    {mainLoading ? (
+                      <FaSpinner className="animate-spin" />
+                    ) : (
+                      <FaWandMagicSparkles />
+                    )}
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Generate with AI</p>
+                  </TooltipContent>
+                </Tooltip>
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <div className="grid gap-4">
+                  <div className="space-y-2">
+                    <h4 className="leading-none font-medium">Confirm</h4>
+                    <p className="text-muted-foreground text-sm">
+                      Are you sure you want to spend 10 nexoins to generate
+                    </p>
+                  </div>
+                  <div className="grid gap-2">
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Button
+                        onClick={(e) => handleGenerateFlashcards(e)}
+                        title="Confirm"
+                      ></Button>
+                    </div>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+
             <Tooltip>
               <TooltipTrigger
                 type="button"

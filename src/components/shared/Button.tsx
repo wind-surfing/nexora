@@ -8,7 +8,7 @@ interface ButtonProps {
   rightIcon?: ReactNode;
   leftIcon?: ReactNode;
   containerClass?: string;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   href?: string;
   variant?: "primary" | "secondary";
   size?: "sm" | "md";
@@ -46,7 +46,7 @@ const Button = ({
             type={type}
             aria-label={ariaLabel}
             disabled={disabled}
-            onClick={onClick}
+            onClick={(e) => onClick?.(e)}
             className={clsx(
               "flex flex-row items-center justify-center gap-2 group relative z-10 w-fit overflow-hidden rounded-full font-general text-xs uppercase",
               sizeClass,
@@ -75,7 +75,7 @@ const Button = ({
           type={type}
           aria-label={ariaLabel}
           disabled={disabled}
-          onClick={onClick}
+          onClick={(e) => onClick?.(e)}
           className={clsx(
             "flex flex-row items-center justify-center gap-2 group relative z-10 w-fit overflow-hidden rounded-full font-general text-xs uppercase",
             sizeClass,

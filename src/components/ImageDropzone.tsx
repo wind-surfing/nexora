@@ -19,8 +19,8 @@ export default function Dropzone({
       if (data && data.length > 0 && data[0]) {
         try {
           const img = await getImageByPath(data[0], "dataUrl");
-          if (img && typeof img === "string") {
-            setImageUrl(img);
+          if (img?.url && typeof img.url === "string") {
+            setImageUrl(img.url);
           }
         } catch (error) {
           console.error("Error loading image:", error);
