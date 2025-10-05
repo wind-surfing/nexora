@@ -19,7 +19,7 @@ interface CompoundCard {
 interface StoredImage {
   id: string;
   name: string;
-  data: string; 
+  data: string;
   mimeType: string;
   size: number;
   createdAt: Date;
@@ -196,11 +196,60 @@ export const clearCredentials = async (): Promise<boolean> => {
   }
 };
 
+export const updateCurrentUser = async (
+  updates: Partial<Omit<UserCredentials, "password">> & { password?: string }
+): Promise<boolean> => {
+  try {
+    const db = await initDB();
+    const transaction = db.transaction([STORE_NAME], "readwrite");
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.get("user_credentials");
+
+    return new Promise((resolve, reject) => {
+      request.onsuccess = async () => {
+        const existingCredentials = request.result;
+        if (!existingCredentials) {
+          db.close();
+          reject(new Error("No user credentials found to update."));
+          return;
+        }
+
+        const updatedData = { ...existingCredentials, ...updates };
+
+        if (updates.password) {
+          updatedData.password = await hashPassword(updates.password);
+        }
+
+        const putRequest = store.put(updatedData);
+        putRequest.onsuccess = () => {
+          db.close();
+          resolve(true);
+        };
+        putRequest.onerror = () => {
+          db.close();
+          reject(new Error("Failed to save updated credentials."));
+        };
+      };
+
+      request.onerror = () => {
+        db.close();
+        reject(new Error("Failed to retrieve user for update."));
+      };
+
+      transaction.onerror = () => {
+        db.close();
+        reject(new Error("Transaction failed during update."));
+      };
+    });
+  } catch (error) {
+    console.error("Error updating current user:", error);
+    return false;
+  }
+};
 
 const generateId = (): string => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 };
-
 
 export const storeCompoundCard = async (
   compoundCardData: Omit<CompoundCard, "id" | "createdAt" | "updatedAt">
@@ -242,7 +291,6 @@ export const storeCompoundCard = async (
     return null;
   }
 };
-
 
 export const updateCompoundCard = async (
   id: string,
@@ -393,7 +441,7 @@ export const deleteCompoundCards = async (criteria: {
 
         request.onsuccess = () => {
           db.close();
-          resolve(-1); 
+          resolve(-1);
         };
 
         request.onerror = () => {
@@ -544,10 +592,15 @@ export const storeImage = async (file: File): Promise<string | null> => {
   }
 };
 
+export interface ImageResponse {
+  url: string | Blob;
+  name: string;
+}
+
 export const getImageByPath = async (
   pathSlug: string,
-  formatChange?: "blob" | "dataUrl" | "base64"
-): Promise<string | Blob | null> => {
+  formatChange?: "blob" | "dataUrl" | "base64" | "path"
+): Promise<ImageResponse | null> => {
   try {
     const id = pathSlug.replace("/**idb**/", "");
 
@@ -567,6 +620,7 @@ export const getImageByPath = async (
           return;
         }
 
+        let url: string | Blob;
         switch (formatChange) {
           case "blob":
             const byteCharacters = atob(result.data);
@@ -575,19 +629,25 @@ export const getImageByPath = async (
               byteNumbers[i] = byteCharacters.charCodeAt(i);
             }
             const byteArray = new Uint8Array(byteNumbers);
-            const blob = new Blob([byteArray], { type: result.mimeType });
-            resolve(blob);
+            url = new Blob([byteArray], { type: result.mimeType });
             break;
 
           case "dataUrl":
-            const dataUrl = `data:${result.mimeType};base64,${result.data}`;
-            resolve(dataUrl);
+            url = `data:${result.mimeType};base64,${result.data}`;
+            break;
+
+          case "path":
+            url = `/**idb**/${result.id}`;
             break;
 
           case "base64":
           default:
-            resolve(result.data);
+            url = result.data;
         }
+        resolve({
+          url,
+          name: result.name,
+        });
       };
 
       request.onerror = () => {
@@ -635,5 +695,70 @@ export const deleteImage = async (pathSlug: string): Promise<boolean> => {
   } catch (error) {
     console.error("Error deleting image:", error);
     return false;
+  }
+};
+
+export const getAllImages = async (
+  count: number = 10,
+  format: "blob" | "dataUrl" | "base64" | "path" = "dataUrl"
+): Promise<ImageResponse[]> => {
+  try {
+    const db = await initDB();
+    const transaction = db.transaction([IMAGES_STORE], "readonly");
+    const store = transaction.objectStore(IMAGES_STORE);
+    const request = store.getAll(null, count === -1 ? undefined : count);
+
+    return new Promise((resolve, reject) => {
+      request.onsuccess = () => {
+        db.close();
+        const results = request.result as StoredImage[];
+        if (!results) {
+          resolve([]);
+          return;
+        }
+
+        const formattedImages = results.map((result) => {
+          let url: string | Blob;
+          switch (format) {
+            case "blob":
+              const byteCharacters = atob(result.data);
+              const byteNumbers = new Array(byteCharacters.length);
+              for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+              }
+              const byteArray = new Uint8Array(byteNumbers);
+              url = new Blob([byteArray], { type: result.mimeType });
+              break;
+            case "dataUrl":
+              url = `data:${result.mimeType};base64,${result.data}`;
+              break;
+            case "path":
+              url = `/**idb**/${result.id}`;
+              break;
+            case "base64":
+            default:
+              url = result.data;
+          }
+          return {
+            url,
+            name: result.name,
+          };
+        });
+        resolve(formattedImages);
+      };
+
+      request.onerror = () => {
+        db.close();
+        reject(new Error("Failed to retrieve all images."));
+      };
+
+      transaction.onerror = () => {
+        db.close();
+        reject(new Error("Transaction failed while getting all images."));
+      };
+    });
+  } catch (error) {
+    console.error("Error retrieving all images:", error);
+    return [];
   }
 };

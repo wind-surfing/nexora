@@ -46,7 +46,7 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { toast } from "sonner";
-import { storeCompoundCard } from "@/helper/idb";
+import { getAllImages, storeCompoundCard } from "@/helper/idb";
 import { useRouter } from "next/navigation";
 import createFlashcards from "@/lib/generateFlashcards";
 
@@ -94,6 +94,40 @@ function Page() {
       } catch (error) {
         toast.error("Failed to create flashcard set");
       }
+    }
+  };
+
+  const handleGenerateFlashcards = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e.preventDefault();
+
+    const images = await getAllImages(-1, "path");
+
+    if (cardSetData.idea.trim() === "") {
+      toast.error("Set idea cannot be empty!");
+      return;
+    }
+    if (cardSetData.description.trim() === "") {
+      toast.error("Set description cannot be empty!");
+      return;
+    }
+
+    try {
+      const response = await createFlashcards(
+        images,
+        cardSetData,
+        (bool) => true
+      );
+      if (response) {
+        setCardSetDataList((prev) => [...prev, ...response]);
+      } else {
+        toast.error("Failed to get flashcards");
+      }
+
+      toast.success("Flashcards generated!");
+    } catch (error) {
+      toast.error("Failed to generate flashcards");
     }
   };
 
@@ -171,17 +205,7 @@ function Page() {
             <Tooltip>
               <TooltipTrigger
                 type="button"
-                onClick={async () => {
-                  const generatedContent = await createFlashcards(
-                    [""],
-                    {
-                      idea: cardSetData.idea,
-                      description: cardSetData.description,
-                    },
-                    (loading: boolean) => {}
-                  );
-                  console.log("Generated Content: ", generatedContent);
-                }}
+                onClick={(e) => handleGenerateFlashcards(e)}
                 className="flex flex-row items-center justify-center p-2 h-10 w-10 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer"
               >
                 <FaWandMagicSparkles />
