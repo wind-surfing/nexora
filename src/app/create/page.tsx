@@ -50,6 +50,7 @@ import { toast } from "sonner";
 import { getAllImages, storeCompoundCard } from "@/helper/idb";
 import { useRouter } from "next/navigation";
 import createFlashcards from "@/lib/generateFlashcards";
+import createFlashcard from "@/lib/generateFlashcard";
 
 function Page() {
   const router = useRouter();
@@ -58,6 +59,7 @@ function Page() {
     description: "",
   });
   const [mainLoading, setMainLoading] = useState(false);
+  const [secondaryLoading, setSecondaryLoading] = useState<number>(0);
 
   const [cardSetDataList, setCardSetDataList] = useState<Card[]>(
     defaultCardSetDataList
@@ -103,6 +105,7 @@ function Page() {
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault();
+    setMainLoading(true);
 
     const images = await getAllImages(-1, "path");
 
@@ -116,9 +119,7 @@ function Page() {
     }
 
     try {
-      const response = await createFlashcards(images, cardSetData, (boolean) =>
-        setMainLoading(boolean)
-      );
+      const response = await createFlashcards(images, cardSetData);
       if (response) {
         setCardSetDataList((prev) => [...prev, ...response]);
       } else {
@@ -128,6 +129,55 @@ function Page() {
       toast.success("Flashcards generated!");
     } catch (error) {
       toast.error("Failed to generate flashcards");
+    } finally {
+      setMainLoading(false);
+    }
+  };
+
+  const handleGenerateFlashcard = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    index: number
+  ) => {
+    e.preventDefault();
+    setSecondaryLoading(index + 1);
+
+    const images = await getAllImages(-1, "path");
+
+    if (cardSetData.idea.trim() === "") {
+      toast.error("Set idea cannot be empty!");
+      return;
+    }
+    if (cardSetData.description.trim() === "") {
+      toast.error("Set description cannot be empty!");
+      return;
+    }
+
+    const contentCard = cardSetDataList[index];
+    const subContents = cardSetDataList
+      .filter((_, i) => i !== index)
+      .filter((card) => card.term && card.definition);
+
+    try {
+      const response = await createFlashcard(images, cardSetData, {
+        examples: subContents,
+        content: contentCard,
+      });
+
+      if (response) {
+        setCardSetDataList((prev) => {
+          const newArray = [...prev];
+          newArray[index] = response;
+          return newArray;
+        });
+      } else {
+        toast.error("Failed to get flashcards");
+      }
+
+      toast.success("Flashcards generated!");
+    } catch (error) {
+      toast.error("Failed to generate flashcard");
+    } finally {
+      setSecondaryLoading(0);
     }
   };
 
@@ -439,9 +489,45 @@ function Page() {
                           </div>
                         </PopoverContent>
                       </Popover>
-                      <span className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
-                        <FaWandMagicSparkles />
-                      </span>
+                      <Popover>
+                        <PopoverTrigger className="rounded-sm cursor-pointer hover:bg-background/30 p-1 transition-all duration-300">
+                          <Tooltip>
+                            <TooltipTrigger type="button">
+                              {secondaryLoading === index + 1 ? (
+                                <FaSpinner className="animate-spin" />
+                              ) : (
+                                <FaWandMagicSparkles />
+                              )}
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Generate with AI</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80">
+                          <div className="grid gap-4">
+                            <div className="space-y-2">
+                              <h4 className="leading-none font-medium">
+                                Confirm
+                              </h4>
+                              <p className="text-muted-foreground text-sm">
+                                Are you sure you want to spend 10 nexoins to
+                                generate
+                              </p>
+                            </div>
+                            <div className="grid gap-2">
+                              <div className="grid grid-cols-3 items-center gap-4">
+                                <Button
+                                  onClick={(e) =>
+                                    handleGenerateFlashcard(e, index)
+                                  }
+                                  title="Confirm"
+                                ></Button>
+                              </div>
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                     </div>
                     <div className="flex flex-row items-center justify-center py-1 gap-4">
                       <span
