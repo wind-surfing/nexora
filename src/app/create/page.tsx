@@ -2,7 +2,6 @@
 
 import Button from "@/components/shared/Button";
 import InputField from "@/components/shared/InputField";
-import { Switch } from "@/components/ui/switch";
 import {
   Tooltip,
   TooltipContent,
@@ -26,7 +25,11 @@ import { GiChoice } from "react-icons/gi";
 import { IoMdSwap } from "react-icons/io";
 import React, { useState } from "react";
 import { Card, Cardset, CompoundCard } from "@/types/cards";
-import { defaultCardSetDataList, shortcuts, singleCardSetData } from "@/config";
+import {
+  createShortcuts,
+  defaultCardSetDataList,
+  singleCardSetData,
+} from "@/config";
 import Dropzone from "@/components/ImageDropzone";
 import {
   Popover,
@@ -56,6 +59,7 @@ import { useRouter } from "next/navigation";
 import createFlashcards from "@/lib/generateFlashcards";
 import createFlashcard from "@/lib/generateFlashcard";
 import FileDropzone from "@/components/FileDropzone";
+import { useShortcuts } from "@/hooks/useShortcuts";
 
 function Page() {
   const router = useRouter();
@@ -74,8 +78,8 @@ function Page() {
     setCardSetData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
+    e?.preventDefault();
 
     if (cardSetData.idea.trim() === "") {
       toast.error("Set idea cannot be empty!");
@@ -107,19 +111,21 @@ function Page() {
   };
 
   const handleGenerateFlashcards = async (
-    e: React.MouseEvent<HTMLButtonElement>
+    e?: React.MouseEvent<HTMLButtonElement>
   ) => {
-    e.preventDefault();
+    e?.preventDefault();
     setMainLoading(true);
 
     const images = await getAllImages(-1, "path");
 
     if (cardSetData.idea.trim() === "") {
       toast.error("Set idea cannot be empty!");
+      setMainLoading(false);
       return;
     }
     if (cardSetData.description.trim() === "") {
       toast.error("Set description cannot be empty!");
+      setMainLoading(false);
       return;
     }
 
@@ -151,10 +157,12 @@ function Page() {
 
     if (cardSetData.idea.trim() === "") {
       toast.error("Set idea cannot be empty!");
+      setSecondaryLoading(0);
       return;
     }
     if (cardSetData.description.trim() === "") {
       toast.error("Set description cannot be empty!");
+      setSecondaryLoading(0);
       return;
     }
 
@@ -222,8 +230,8 @@ function Page() {
     reader.readAsText(file);
   };
 
-  const handleExport = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const handleExport = async (e?: React.MouseEvent<HTMLButtonElement>) => {
+    e?.preventDefault();
 
     const compoundCard: CompoundCard = {
       idea: cardSetData.idea,
@@ -244,6 +252,48 @@ function Page() {
     URL.revokeObjectURL(url);
     toast.success("Flashcard set exported!");
   };
+
+  const shortcuts = createShortcuts({
+    onImport: () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".json";
+      input.onchange = (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (file) {
+          handleImport(file);
+        }
+      };
+      input.click();
+    },
+    onExport: () => handleExport(),
+    onGenerateAI: () => handleGenerateFlashcards(),
+    onFlip: () =>
+      setCardSetDataList((prev) =>
+        prev.map((card) => ({
+          ...card,
+          term: card.definition,
+          definition: card.term,
+        }))
+      ),
+    onAdd: () => setCardSetDataList((prev) => [...prev, singleCardSetData]),
+    onSave: () => handleSubmit(),
+    onClear: () =>
+      setCardSetDataList((prev) =>
+        prev.map(() => ({
+          term: "",
+          definition: "",
+          src: "",
+          alt: "",
+          options: ["", "", ""],
+          hint: "",
+          theme: "",
+          category: "",
+        }))
+      ),
+  });
+
+  useShortcuts(shortcuts);
 
   return (
     <main className="flex flex-row items-center justify-center w-full py-16 px-4">
@@ -290,9 +340,6 @@ function Page() {
             ></Button>
           </div>
           <div className="flex flex-row items-center justify-center gap-4">
-            <span className="flex flex-row items-center justify-center gap-2">
-              Suggestions <Switch className="cursor-pointer" />
-            </span>
             <Menubar className="border-none shadow-none">
               <MenubarMenu>
                 <MenubarTrigger className="flex flex-row items-center justify-center p-2 h-10 w-10 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer">

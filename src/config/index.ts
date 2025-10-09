@@ -53,60 +53,72 @@ export const singleCardSetData: Card = {
   category: "",
 };
 
-export const shortcuts = [
+export type ShortcutConfig = {
+  category: string;
+  shorts: {
+    key: string;
+    action: string;
+    function: () => void;
+  }[];
+}[];
+
+export const createShortcuts = (handlers: {
+  onImport: () => void;
+  onExport: () => void;
+  onGenerateAI: () => void;
+  onFlip: () => void;
+  onAdd: () => void;
+  onSave: () => void;
+  onClear: () => void;
+}): ShortcutConfig => [
   {
-    category: "Externals" as string,
+    category: "Externals",
     shorts: [
       {
-        key: "Ctrl + I",
+        key: "Alt + I",
         action: "Import",
+        function: handlers.onImport,
       },
       {
-        key: "Ctrl + E",
+        key: "Alt + E",
         action: "Export",
+        function: handlers.onExport,
       },
-    ] as { key: string; action: string }[],
+    ],
   },
   {
-    category: "Utils" as string,
+    category: "Utils",
     shorts: [
       {
-        key: "Ctrl + P",
-        action: "Practise",
-      },
-      {
-        key: "Ctrl + T",
-        action: "Suggestions",
-      },
-      {
-        key: "Ctrl + K",
-        action: "Keyboard",
-      },
-      {
-        key: "Ctrl + M",
+        key: "Alt + M",
         action: "AI",
+        function: handlers.onGenerateAI,
       },
       {
-        key: "Ctrl + F",
+        key: "Alt + F",
         action: "Flip",
+        function: handlers.onFlip,
       },
-    ] as { key: string; action: string }[],
+    ],
   },
   {
-    category: "Actions" as string,
+    category: "Actions",
     shorts: [
       {
-        key: "Ctrl + N",
+        key: "Alt + N",
         action: "Add",
+        function: handlers.onAdd,
       },
       {
-        key: "Ctrl + S",
+        key: "Alt + L",
         action: "Save",
+        function: handlers.onSave,
       },
       {
-        key: "Ctrl + C",
+        key: "Alt + C",
         action: "Clear",
+        function: handlers.onClear,
       },
-    ] as { key: string; action: string }[],
+    ],
   },
 ];
