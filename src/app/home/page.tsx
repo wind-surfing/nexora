@@ -1,20 +1,48 @@
-import Link from "next/link";
-import React from "react";
+"use client";
 
-function page() {
+import Cards from "@/components/Cards";
+import Button from "@/components/shared/Button";
+import { CompoundCard, getCompoundCards } from "@/helper/idb";
+import React, { useEffect, useState } from "react";
+import { GiCardRandom, GiMagicBroom } from "react-icons/gi";
+
+function Page() {
+  const [flashCards, setFlashCards] = useState<CompoundCard[]>([]);
+
+  useEffect(() => {
+    const fetchFlashcards = async () => {
+      const cards = await getCompoundCards();
+      setFlashCards(cards);
+    };
+
+    fetchFlashcards();
+  }, []);
+
   return (
     <>
-      <div className="flex flex-col gap-6 w-full h-[calc(100vh-64px)] items-center justify-center">
-        <h1 className="text-2xl font-bold">Currently Pending</h1>
-        <h2 className="text-xl">
-          Please go to{" "}
-          <Link className="text-primary" href="/create">
-            Create Page
-          </Link>
-        </h2>
-      </div>
+      <main className="flex flex-row items-center justify-center w-full px-4">
+        <section className="py-12 w-4/5">
+          <header className="flex flex-row items-center justify-between sticky top-16 z-20 bg-background h-16 w-full border-b">
+            <h2 className="text-3xl">Let&apos;s Do Flashcards</h2>
+            <div className="flex flex-row items-center justify-center gap-4">
+              <Button
+                leftIcon={<GiMagicBroom />}
+                type="button"
+                title="Magic Guess"
+              ></Button>
+              <Button
+                leftIcon={<GiCardRandom />}
+                type="button"
+                title="Magic Pick"
+              ></Button>
+            </div>
+          </header>
+
+          <Cards flashCards={flashCards}></Cards>
+        </section>
+      </main>
     </>
   );
 }
 
-export default page;
+export default Page;

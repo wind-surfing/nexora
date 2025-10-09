@@ -299,7 +299,7 @@ function Page() {
     <main className="flex flex-row items-center justify-center w-full py-16 px-4">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col items-center  w-4/5 h-full gap-6"
+        className="flex flex-col items-center w-4/5 h-full gap-6"
       >
         <header className="flex flex-row items-center justify-between sticky top-16 z-20 bg-background h-16 w-full border-b">
           <h2 className="text-3xl">Create a new flashcard set</h2>

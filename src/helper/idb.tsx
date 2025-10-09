@@ -7,7 +7,7 @@ interface UserCredentials {
   nexoins: number;
 }
 
-interface CompoundCard {
+export interface CompoundCard {
   id: string;
   idea: string;
   description: string;
