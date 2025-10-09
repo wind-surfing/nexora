@@ -2,7 +2,13 @@ import { CompoundCard } from "@/helper/idb";
 import React from "react";
 import FlashcardListing from "./FlashcardListing";
 
-function Cards({ flashCards }: { flashCards?: CompoundCard[] }) {
+function Cards({
+  flashCards,
+  magicallyPickedIndex,
+}: {
+  flashCards?: CompoundCard[];
+  magicallyPickedIndex: number | null;
+}) {
   return (
     <div className="relative">
       <div className="mt-6 flex items-center w-full">
@@ -10,6 +16,7 @@ function Cards({ flashCards }: { flashCards?: CompoundCard[] }) {
           {flashCards?.map((flashcard, i) => (
             <FlashcardListing
               key={`flashcard-${i}`}
+              magicallyPickedIndex={magicallyPickedIndex}
               flashcard={flashcard}
               index={i}
             />

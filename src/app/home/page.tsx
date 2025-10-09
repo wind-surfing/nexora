@@ -8,6 +8,9 @@ import { GiCardRandom, GiMagicBroom } from "react-icons/gi";
 
 function Page() {
   const [flashCards, setFlashCards] = useState<CompoundCard[]>([]);
+  const [magicallyPickedIndex, setMagicallyPickedIndex] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     const fetchFlashcards = async () => {
@@ -17,6 +20,12 @@ function Page() {
 
     fetchFlashcards();
   }, []);
+
+  const handleMagicPick = () => {
+    if (flashCards.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * flashCards.length);
+    setMagicallyPickedIndex(randomIndex);
+  };
 
   return (
     <>
@@ -31,6 +40,7 @@ function Page() {
                 title="Magic Guess"
               ></Button>
               <Button
+                onClick={handleMagicPick}
                 leftIcon={<GiCardRandom />}
                 type="button"
                 title="Magic Pick"
@@ -38,7 +48,10 @@ function Page() {
             </div>
           </header>
 
-          <Cards flashCards={flashCards}></Cards>
+          <Cards
+            magicallyPickedIndex={magicallyPickedIndex}
+            flashCards={flashCards}
+          ></Cards>
         </section>
       </main>
     </>

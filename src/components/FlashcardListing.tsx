@@ -6,13 +6,19 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import ImageSlider from "./ImageSlider";
 import { CompoundCard, getImageByPath } from "@/helper/idb";
+import { Badge } from "./ui/badge";
 
 interface FlashcardListingProps {
   flashcard: CompoundCard | null;
   index: number;
+  magicallyPickedIndex: number | null;
 }
 
-const FlashcardListing = ({ flashcard, index }: FlashcardListingProps) => {
+const FlashcardListing = ({
+  flashcard,
+  index,
+  magicallyPickedIndex,
+}: FlashcardListingProps) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [validUrls, setValidUrls] = useState<string[]>([]);
 
@@ -57,7 +63,13 @@ const FlashcardListing = ({ flashcard, index }: FlashcardListingProps) => {
         href={`/play?flashcard=${flashcard.id}`}
       >
         <div className="flex flex-col w-full">
-          <ImageSlider urls={validUrls} />
+          <ImageSlider
+            urls={
+              index === magicallyPickedIndex
+                ? ["/magicallypicked.gif"]
+                : validUrls
+            }
+          />
 
           <div
             className="flex flex-col w-full px-2 pb-4 rounded-b-xl"
@@ -66,8 +78,11 @@ const FlashcardListing = ({ flashcard, index }: FlashcardListingProps) => {
               border: `2px solid ${flashcard.cards[0].theme || "#000000"}`,
             }}
           >
-            <h3 className="mt-4 font-medium text-lg text-gray-700 line-clamp-2">
+            <h3 className="mt-4 font-medium text-lg text-gray-700 line-clamp-2 flex flex-row items-center justify-between">
               {flashcard.idea}
+              {index === magicallyPickedIndex && (
+                <Badge>Magically Picked</Badge>
+              )}
             </h3>
             <p className="mt-1 text-sm text-gray-500 line-clamp-2">
               {flashcard.description}
