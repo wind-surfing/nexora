@@ -296,7 +296,7 @@ function Page() {
   useShortcuts(shortcuts);
 
   return (
-    <main className="flex flex-row items-center justify-center w-full py-16 px-4">
+    <main className="flex flex-row items-center justify-center w-full py-8 px-4">
       <form
         onSubmit={handleSubmit}
         className="flex flex-col items-center w-4/5 h-full gap-6"

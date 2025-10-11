@@ -30,7 +30,7 @@ function Page() {
   return (
     <>
       <main className="flex flex-row items-center justify-center w-full px-4">
-        <section className="py-12 w-4/5">
+        <section className="py-8 w-4/5">
           <header className="flex flex-row items-center justify-between sticky top-16 z-20 bg-background h-16 w-full border-b">
             <h2 className="text-3xl">Let&apos;s Do Flashcards</h2>
             <div className="flex flex-row items-center justify-center gap-4">
