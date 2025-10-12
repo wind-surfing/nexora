@@ -24,7 +24,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useRouter, useSearchParams } from "next/navigation";
-import { CompoundCard, getCompoundCards } from "@/helper/idb";
+import { CompoundCard, getCompoundCards, getImageByPath } from "@/helper/idb";
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
 
@@ -71,22 +71,59 @@ function Page() {
     const getFlashcardSet = async () => {
       const response = await getCompoundCards();
 
-      const randomFlashcard = () => {
+      if (!response[0]?.id) {
+        toast.error("No flashcard set found, please create one first");
+        router.push("/create");
+        return response;
+      }
+
+      const getUpdatedCardSetWithTheCorrectImagePaths = async (
+        cardIdx: number
+      ) => {
+        if (response.length > 0) {
+          const images = response[cardIdx].cards
+            .map((card) => card.src)
+            .filter((src) => src && src.trim() !== "");
+          const usableImages = await Promise.all(
+            images.map(async (src) => await getImageByPath(src, "dataUrl"))
+          );
+          const usableUrls = usableImages
+            .map((image) => image?.url || "")
+            .filter(
+              (url) => url && typeof url === "string" && url.trim() !== ""
+            );
+
+          const updatedCards = response[cardIdx].cards.map((card, idx) => ({
+            ...card,
+            src: usableUrls[idx] as string,
+          }));
+
+          return {
+            ...response[cardIdx],
+            cards: updatedCards,
+          };
+        }
+      };
+
+      const randomFlashcard = async () => {
         const randomIdx = Math.floor(Math.random() * response.length);
+        const updatedCardSet = await getUpdatedCardSetWithTheCorrectImagePaths(
+          randomIdx
+        );
         const id = response[randomIdx]?.id;
         const newUrl = new URL(window.location.href);
         newUrl.searchParams.set("flashcard", id || "");
         window.history.replaceState({}, "", newUrl.toString());
-        setFlashCardSet(response[randomIdx]);
+        setFlashCardSet(updatedCardSet);
         setGamifiedData({
           isCompleted: false,
           correctedCards: [],
           currentCard: 1,
-          numberOfCards: response[randomIdx]?.cards.length || 0,
+          numberOfCards: updatedCardSet?.cards.length || 0,
           healthLooseOnWrongByUser:
-            100 / (response[randomIdx]?.cards.length / 2 || 1),
+            100 / ((updatedCardSet?.cards.length || 1) / 2 || 1),
           healthLooseOnCorrectByMonster:
-            100 / (response[randomIdx]?.cards.length || 1),
+            100 / (updatedCardSet?.cards.length || 1),
           maxUserHealth: 100,
           currentUserHealth: 100,
           userHealthAfterPotion: Math.min(100 + 30, 100),
@@ -97,25 +134,24 @@ function Page() {
         });
       };
 
-      if (!response[0]?.id) {
-        toast.error("No flashcard set found, please create one first");
-        router.push("/create");
-        return response;
-      }
-
       if (!flashcardId) {
         randomFlashcard();
       } else {
         const cardSet = response.find((set) => set.id === flashcardId);
-        if (cardSet) {
-          setFlashCardSet(cardSet);
+        const updatedCardSet = await getUpdatedCardSetWithTheCorrectImagePaths(
+          response.indexOf(cardSet!)
+        );
+        if (updatedCardSet) {
+          setFlashCardSet(updatedCardSet);
           setGamifiedData({
             isCompleted: false,
             correctedCards: [],
             currentCard: 1,
-            numberOfCards: cardSet?.cards.length || 0,
-            healthLooseOnWrongByUser: 100 / (cardSet?.cards.length / 2 || 1),
-            healthLooseOnCorrectByMonster: 100 / (cardSet?.cards.length || 1),
+            numberOfCards: updatedCardSet?.cards.length || 0,
+            healthLooseOnWrongByUser:
+              100 / ((updatedCardSet?.cards.length || 1) / 2 || 1),
+            healthLooseOnCorrectByMonster:
+              100 / (updatedCardSet?.cards.length || 1),
             maxUserHealth: 100,
             currentUserHealth: 100,
             userHealthAfterPotion: Math.min(100 + 30, 100),
