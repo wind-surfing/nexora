@@ -141,10 +141,27 @@ function Page() {
   const handleHint = () => {
     setHint(gamifiedData?.currentCard || 1);
     if (hint != gamifiedData?.currentCard) {
+      if (gamifiedData.hintPotions > 0) {
+        setGamifiedData((prev) => ({
+          ...prev,
+          hintPotions: Math.max(prev.hintPotions - 1, 0),
+        }));
+      } else {
+        toast.error("You don't have enough hint potions");
+      }
+    }
+  };
+
+  const handleHealth = () => {
+    if (gamifiedData.healthPotions > 0) {
       setGamifiedData((prev) => ({
         ...prev,
-        hintPotions: Math.max(prev.hintPotions - 1, 0),
+        healthPotions: Math.max(prev.healthPotions - 1, 0),
+        currentUserHealth: Math.min(prev.currentUserHealth + 30, 100),
+        userHealthAfterPotion: Math.min(prev.userHealthAfterPotion + 30, 100),
       }));
+    } else {
+      toast.error("You don't have enough health potions");
     }
   };
 
@@ -443,6 +460,7 @@ function Page() {
                               <div className="grid gap-2">
                                 <div className="grid grid-cols-3 items-center gap-4">
                                   <Button
+                                    onClick={() => handleHealth()}
                                     type="button"
                                     title="Confirm"
                                   ></Button>
