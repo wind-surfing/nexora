@@ -34,11 +34,11 @@ function Page() {
           <header className="flex flex-row items-center justify-between sticky top-16 z-20 bg-background h-16 w-full border-b">
             <h2 className="text-3xl">Let&apos;s Do Flashcards</h2>
             <div className="flex flex-row items-center justify-center gap-4">
-              <Button
+              {/* <Button
                 leftIcon={<GiMagicBroom />}
                 type="button"
                 title="Magic Guess"
-              ></Button>
+              ></Button> */}
               <Button
                 onClick={handleMagicPick}
                 leftIcon={<GiCardRandom />}

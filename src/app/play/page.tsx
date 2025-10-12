@@ -3,7 +3,7 @@
 import "@/styles/fled-styles.css";
 import Button from "@/components/shared/Button";
 import { Button as Button2 } from "@/components/ui/button";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import {
   FaArrowLeft,
   FaArrowRight,
@@ -53,10 +53,24 @@ interface EnemyState {
 }
 
 function Page() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-[calc(100vh-64px)] w-full flex flex-row items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
+      <PageContent />
+    </Suspense>
+  );
+}
+
+function PageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const flashcardId = searchParams.get("flashcard");
-  const [mode, setMode] = useState<"magic" | "review">("magic");
+  // const [mode, setMode] = useState<"magic" | "review">("magic");
   const [flashCardSet, setFlashCardSet] = useState<CompoundCard>();
   const [gamifiedData, setGamifiedData] = useState<GamifiedData>({
     isCompleted: false,
@@ -223,7 +237,7 @@ function Page() {
     getFlashcardSet();
 
     return () => {};
-  }, [flashcardId]);
+  }, [flashcardId, router]);
 
   const handleHint = () => {
     setHint(gamifiedData?.currentCard || 1);
@@ -405,7 +419,7 @@ function Page() {
               <span>Set of {flashCardSet?.idea}</span>
             </div>
             <div className="flex flex-row items-center justify-center gap-8">
-              <Button
+              {/* <Button
                 type="button"
                 title={
                   mode === "magic" ? "Toggle Review mode" : "Toggle Magic mode"
@@ -413,7 +427,7 @@ function Page() {
                 onClick={() =>
                   setMode((prev) => (prev === "magic" ? "review" : "magic"))
                 }
-              ></Button>
+              ></Button> */}
               <div className="flex flex-row items-center justify-center gap-2">
                 <span className="flex flex-row items-center justify-center gap-1">
                   <GiHealthPotion /> {gamifiedData?.healthPotions ?? 1}
