@@ -44,6 +44,13 @@ interface GamifiedData {
   currentMonsterHealth: number;
 }
 
+interface EnemyState {
+  src: string;
+  alt: string;
+  className: string;
+  type: "permanent" | "temporary";
+}
+
 function Page() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -66,6 +73,39 @@ function Page() {
     currentMonsterHealth: 100,
   });
   const [hint, setHint] = useState(0);
+  const [enemyState, setEnemyState] = useState<EnemyState>({
+    src: "/standing.gif",
+    alt: "Standing",
+    className: "",
+    type: "temporary",
+  });
+
+  const handleEnemyState = (
+    src: string,
+    alt: string = src,
+    className: string = "",
+    type: "permanent" | "temporary" = "temporary"
+  ) => {
+    setEnemyState((prev) => ({
+      ...prev,
+      src: `/${src}.gif`,
+      alt: alt,
+      className: className,
+      type: type,
+    }));
+
+    if (type === "permanent") return;
+    const normalState = setTimeout(() => {
+      setEnemyState((prev) => ({
+        src: "/standing.gif",
+        alt: "Standing",
+        className: "",
+        type: "temporary",
+      }));
+    }, 5000);
+
+    return () => clearTimeout(normalState);
+  };
 
   useEffect(() => {
     const getFlashcardSet = async () => {
@@ -298,6 +338,7 @@ function Page() {
         gamifiedData.correctedCards.length + 1 >=
         gamifiedData.numberOfCards
       ) {
+        handleEnemyState("running", "Running", "fled", "permanent");
         toast.success("Congratulations! You've defeated the monster!");
         queueMicrotask(() => {
           confetti({
@@ -307,6 +348,7 @@ function Page() {
           });
         });
       } else {
+        handleEnemyState("damaged", "Damaged");
         toast.success("Correct! You hit the monster!");
       }
     } else {
@@ -323,6 +365,8 @@ function Page() {
         userHealthAfterPotion: Math.min(newUserHealth + 30, prev.maxUserHealth),
         currentUserHealth: newUserHealth,
       }));
+
+      handleEnemyState("attacking", "Attacking");
 
       toast.error(
         `Wrong! You got hurt! Try to use potion to recover your self`
@@ -610,17 +654,21 @@ function Page() {
                 </main>
               ) : null}
 
-              <main className="flex flex-col items-start justify-start w-3/8 h-full">
+              <main
+                className={
+                  "flex flex-col items-start justify-start h-full w-3/8"
+                }
+              >
                 <section className="h-full w-full text-white rounded-2xl m-4 px-4 flex flex-col items-start justify-start relative overflow-hidden">
                   <div className="h-full w-full flex flex-row items-center justify-center">
                     <Image
-                      src="/standing.gif"
-                      alt="Monster Image"
+                      src={enemyState.src}
+                      alt={enemyState.alt}
                       layout="fill"
-                      objectFit="cover"
                       style={{
                         transform: "scaleX(-1)",
                       }}
+                      className={enemyState.className}
                     />
                   </div>
                 </section>
