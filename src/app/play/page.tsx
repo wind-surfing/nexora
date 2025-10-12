@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/popover";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CompoundCard, getCompoundCards } from "@/helper/idb";
+import confetti from "canvas-confetti";
 import { toast } from "sonner";
 
 interface GamifiedData {
@@ -47,6 +48,7 @@ function Page() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const flashcardId = searchParams.get("flashcard");
+  const [mode, setMode] = useState<"magic" | "review">("magic");
   const [flashCardSet, setFlashCardSet] = useState<CompoundCard>();
   const [gamifiedData, setGamifiedData] = useState<GamifiedData>({
     isCompleted: false,
@@ -256,8 +258,18 @@ function Page() {
         currentMonsterHealth: newMonsterHealth,
       }));
 
-      if (gamifiedData.correctedCards.length + 1 > gamifiedData.numberOfCards) {
+      if (
+        gamifiedData.correctedCards.length + 1 >=
+        gamifiedData.numberOfCards
+      ) {
         toast.success("Congratulations! You've defeated the monster!");
+        queueMicrotask(() => {
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+          });
+        });
       } else {
         toast.success("Correct! You hit the monster!");
       }
@@ -304,7 +316,15 @@ function Page() {
               <span>Set of {flashCardSet?.idea}</span>
             </div>
             <div className="flex flex-row items-center justify-center gap-8">
-              <Button type="button" title="Turn these into Quiz"></Button>
+              <Button
+                type="button"
+                title={
+                  mode === "magic" ? "Toggle Review mode" : "Toggle Magic mode"
+                }
+                onClick={() =>
+                  setMode((prev) => (prev === "magic" ? "review" : "magic"))
+                }
+              ></Button>
               <div className="flex flex-row items-center justify-center gap-2">
                 <span className="flex flex-row items-center justify-center gap-1">
                   <GiHealthPotion /> {gamifiedData?.healthPotions ?? 1}
