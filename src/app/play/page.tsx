@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/components/shared/Button";
-import { Button as Button2 } from "@/components/ui/Button";
+import { Button as Button2 } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
 import {
   FaArrowLeft,
@@ -28,6 +28,7 @@ import { CompoundCard, getCompoundCards } from "@/helper/idb";
 import { toast } from "sonner";
 
 interface GamifiedData {
+  correctedCards: number[];
   currentCard: number;
   numberOfCards: number;
   healthLooseOnWrongByUser: number;
@@ -47,6 +48,7 @@ function Page() {
   const flashcardId = searchParams.get("flashcard");
   const [flashCardSet, setFlashCardSet] = useState<CompoundCard>();
   const [gamifiedData, setGamifiedData] = useState<GamifiedData>({
+    correctedCards: [],
     currentCard: 1,
     numberOfCards: 0,
     healthLooseOnWrongByUser: 100,
@@ -73,6 +75,7 @@ function Page() {
         window.history.replaceState({}, "", newUrl.toString());
         setFlashCardSet(response[randomIdx]);
         setGamifiedData({
+          correctedCards: [],
           currentCard: 1,
           numberOfCards: response[randomIdx]?.cards.length || 0,
           healthLooseOnWrongByUser:
@@ -102,6 +105,7 @@ function Page() {
         if (cardSet) {
           setFlashCardSet(cardSet);
           setGamifiedData({
+            correctedCards: [],
             currentCard: 1,
             numberOfCards: cardSet?.cards.length || 0,
             healthLooseOnWrongByUser: 100 / (cardSet?.cards.length / 2 || 1),
@@ -140,8 +144,39 @@ function Page() {
     }
   };
 
+  const handleShuffle = () => {
+    setFlashCardSet((prev) => {
+      if (!prev) return prev;
+
+      const cardsCopy = [...prev.cards];
+
+      // Fisher–Yates shuffle
+      for (let i = cardsCopy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cardsCopy[i], cardsCopy[j]] = [cardsCopy[j], cardsCopy[i]];
+      }
+
+      const indexMap = new Map<number, number>();
+      cardsCopy.forEach((card, newIndex) => {
+        const oldIndex = prev.cards.indexOf(card);
+        indexMap.set(oldIndex + 1, newIndex + 1);
+      });
+
+      setGamifiedData((prevData) => ({
+        ...prevData,
+        correctedCards: prevData.correctedCards.map(
+          (i) => indexMap.get(i) ?? i
+        ),
+        currentCard: 1,
+      }));
+
+      return { ...prev, cards: cardsCopy };
+    });
+  };
+
   const getMappableOptions = () => {
-    if (!flashCardSet) return [];
+    if (!flashCardSet || gamifiedData.currentCard > gamifiedData.numberOfCards)
+      return [];
     const option = [
       ...flashCardSet.cards[gamifiedData.currentCard - 1]?.options,
       flashCardSet.cards[gamifiedData.currentCard - 1]?.term,
@@ -163,11 +198,16 @@ function Page() {
       );
       setGamifiedData((prev) => ({
         ...prev,
+        correctedCards: [...prev.correctedCards, prev.currentCard],
         currentCard: prev.currentCard + 1,
         currentMonsterHealth: newMonsterHealth,
       }));
 
-      toast.success("Correct! You hit the monster!");
+      if (gamifiedData.currentCard + 1 > gamifiedData.numberOfCards) {
+        toast.success("Congratulations! You've defeated the monster!");
+      } else {
+        toast.success("Correct! You hit the monster!");
+      }
     } else {
       const newUserHealth = Math.max(
         gamifiedData.currentUserHealth - gamifiedData.healthLooseOnWrongByUser,
@@ -175,6 +215,7 @@ function Page() {
       );
       setGamifiedData((prev) => ({
         ...prev,
+        userHealthAfterPotion: Math.min(newUserHealth + 30, prev.maxUserHealth),
         currentUserHealth: newUserHealth,
       }));
       toast.error(
@@ -219,7 +260,8 @@ function Page() {
           <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-128px)]">
             <div className="flex flex-row items-center justify-between w-full h-full gap-4">
               {/* Flashcard content ought to be here */}
-              {flashCardSet?.cards.length ? (
+              {flashCardSet?.cards.length &&
+              gamifiedData.currentCard <= gamifiedData.numberOfCards ? (
                 <main className="flex flex-col items-start justify-start w-5/8 h-full">
                   <section className="aspect-[16/8] w-full bg-primary text-white rounded-2xl mx-4 mt-4 px-4 flex flex-col items-start justify-start relative overflow-hidden">
                     <header
@@ -316,20 +358,23 @@ function Page() {
                         <div
                           className="h-full bg-primary/60 transition-all duration-300 absolute top-0 left-0"
                           style={{
-                            width: gamifiedData?.currentUserHealth + "%",
+                            width:
+                              gamifiedData?.currentUserHealth.toFixed(2) + "%",
                           }}
                         ></div>
                         <div
                           className="h-full bg-primary/5 transition-all duration-300 absolute top-0 left-0"
                           style={{
-                            width: gamifiedData?.userHealthAfterPotion + "%",
+                            width:
+                              gamifiedData?.userHealthAfterPotion.toFixed(2) +
+                              "%",
                           }}
                         ></div>
                         <span
                           className="absolute inset-0 flex items-center justify-center text-[#2A2A2A]"
                           style={{ zIndex: 20 }}
                         >
-                          {gamifiedData?.currentUserHealth}%
+                          {gamifiedData?.currentUserHealth.toFixed(2)}%
                         </span>
                       </div>
                       <span className="flex items-center justify-center">
@@ -414,22 +459,7 @@ function Page() {
                         <TooltipTrigger
                           type="button"
                           className="flex flex-row items-center justify-center p-2 h-10 w-10 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer"
-                          onClick={() => {
-                            setFlashCardSet((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    cards: prev.cards.sort(
-                                      () => Math.random() - 0.5
-                                    ),
-                                  }
-                                : prev
-                            );
-                            setGamifiedData((prev) => ({
-                              ...prev,
-                              currentCard: 1,
-                            }));
-                          }}
+                          onClick={() => handleShuffle()}
                         >
                           <FaShuffle />
                         </TooltipTrigger>
@@ -440,7 +470,7 @@ function Page() {
                     </span>
                   </section>
                   <section className="w-full mx-4 p-4 flex flex-row items-center justify-between">
-                    {getMappableOptions().map((option, idx) => {
+                    {getMappableOptions()?.map((option, idx) => {
                       return (
                         <Button2
                           onClick={() => handleOptionClick(option)}
@@ -474,13 +504,16 @@ function Page() {
                     <div className="h-6 w-24 rounded overflow-hidden border-2 border-gray-700 shadow-inner relative">
                       <div
                         className="h-full bg-destructive/60 transition-all duration-300 absolute top-0 left-0"
-                        style={{ width: "100%" }}
+                        style={{
+                          width:
+                            gamifiedData?.currentMonsterHealth.toFixed(2) + "%",
+                        }}
                       ></div>
                       <span
                         className="absolute inset-0 flex items-center justify-center text-[#2A2A2A]"
                         style={{ zIndex: 20 }}
                       >
-                        100%
+                        {gamifiedData?.currentMonsterHealth.toFixed(2)}%
                       </span>
                     </div>
                   </span>
