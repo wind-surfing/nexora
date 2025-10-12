@@ -28,6 +28,7 @@ import { CompoundCard, getCompoundCards } from "@/helper/idb";
 import { toast } from "sonner";
 
 interface GamifiedData {
+  isCompleted: boolean;
   correctedCards: number[];
   currentCard: number;
   numberOfCards: number;
@@ -48,6 +49,7 @@ function Page() {
   const flashcardId = searchParams.get("flashcard");
   const [flashCardSet, setFlashCardSet] = useState<CompoundCard>();
   const [gamifiedData, setGamifiedData] = useState<GamifiedData>({
+    isCompleted: false,
     correctedCards: [],
     currentCard: 1,
     numberOfCards: 0,
@@ -75,6 +77,7 @@ function Page() {
         window.history.replaceState({}, "", newUrl.toString());
         setFlashCardSet(response[randomIdx]);
         setGamifiedData({
+          isCompleted: false,
           correctedCards: [],
           currentCard: 1,
           numberOfCards: response[randomIdx]?.cards.length || 0,
@@ -105,6 +108,7 @@ function Page() {
         if (cardSet) {
           setFlashCardSet(cardSet);
           setGamifiedData({
+            isCompleted: false,
             correctedCards: [],
             currentCard: 1,
             numberOfCards: cardSet?.cards.length || 0,
@@ -144,29 +148,33 @@ function Page() {
     }
   };
 
+  // I used my entire brain cell but still couldn't figure out so used AI here
   const handleShuffle = () => {
     setFlashCardSet((prev) => {
       if (!prev) return prev;
 
       const cardsCopy = [...prev.cards];
 
-      // Fisher–Yates shuffle
-      for (let i = cardsCopy.length - 1; i > 0; i--) {
+      const uncompletedIndices = cardsCopy
+        .map((_, idx) => idx)
+        .filter((idx) => !gamifiedData.correctedCards.includes(idx + 1));
+
+      const uncompletedCards = uncompletedIndices.map((idx) => cardsCopy[idx]);
+
+      for (let i = uncompletedCards.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [cardsCopy[i], cardsCopy[j]] = [cardsCopy[j], cardsCopy[i]];
+        [uncompletedCards[i], uncompletedCards[j]] = [
+          uncompletedCards[j],
+          uncompletedCards[i],
+        ];
       }
 
-      const indexMap = new Map<number, number>();
-      cardsCopy.forEach((card, newIndex) => {
-        const oldIndex = prev.cards.indexOf(card);
-        indexMap.set(oldIndex + 1, newIndex + 1);
+      uncompletedIndices.forEach((originalIdx, shuffledIdx) => {
+        cardsCopy[originalIdx] = uncompletedCards[shuffledIdx];
       });
 
       setGamifiedData((prevData) => ({
         ...prevData,
-        correctedCards: prevData.correctedCards.map(
-          (i) => indexMap.get(i) ?? i
-        ),
         currentCard: 1,
       }));
 
@@ -184,6 +192,31 @@ function Page() {
     return option.sort(() => Math.random() - 0.5);
   };
 
+  // I used my entire brain cell but still couldn't figure out so used AI here
+  const getNextCurrentCard = () => {
+    if (!flashCardSet) return gamifiedData.currentCard;
+
+    const nextCard = gamifiedData.currentCard + 1;
+
+    if (nextCard <= gamifiedData.numberOfCards) {
+      return nextCard;
+    }
+
+    const uncompletedCards = flashCardSet.cards
+      .map((_, idx) => idx + 1)
+      .filter((idx) => !gamifiedData.correctedCards.includes(idx));
+
+    if (uncompletedCards.length > 0) {
+      return uncompletedCards[0];
+    }
+
+    setGamifiedData((prev) => ({
+      ...prev,
+      isCompleted: true,
+    }));
+    return gamifiedData.currentCard;
+  };
+
   const handleOptionClick = (option: string) => {
     if (!flashCardSet) return;
 
@@ -198,12 +231,15 @@ function Page() {
       );
       setGamifiedData((prev) => ({
         ...prev,
+        isCompleted:
+          prev.correctedCards.length + 1 === prev.numberOfCards &&
+          newMonsterHealth <= 0,
         correctedCards: [...prev.correctedCards, prev.currentCard],
-        currentCard: prev.currentCard + 1,
+        currentCard: getNextCurrentCard(),
         currentMonsterHealth: newMonsterHealth,
       }));
 
-      if (gamifiedData.currentCard + 1 > gamifiedData.numberOfCards) {
+      if (gamifiedData.correctedCards.length + 1 > gamifiedData.numberOfCards) {
         toast.success("Congratulations! You've defeated the monster!");
       } else {
         toast.success("Correct! You hit the monster!");
@@ -213,11 +249,16 @@ function Page() {
         gamifiedData.currentUserHealth - gamifiedData.healthLooseOnWrongByUser,
         0
       );
+
       setGamifiedData((prev) => ({
         ...prev,
+        isCompleted:
+          prev.correctedCards.length === prev.numberOfCards &&
+          prev.currentMonsterHealth <= 0,
         userHealthAfterPotion: Math.min(newUserHealth + 30, prev.maxUserHealth),
         currentUserHealth: newUserHealth,
       }));
+
       toast.error(
         `Wrong! You got hurt! Try to use potion to recover your self`
       );
@@ -260,8 +301,7 @@ function Page() {
           <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-128px)]">
             <div className="flex flex-row items-center justify-between w-full h-full gap-4">
               {/* Flashcard content ought to be here */}
-              {flashCardSet?.cards.length &&
-              gamifiedData.currentCard <= gamifiedData.numberOfCards ? (
+              {flashCardSet?.cards.length && !gamifiedData?.isCompleted ? (
                 <main className="flex flex-col items-start justify-start w-5/8 h-full">
                   <section className="aspect-[16/8] w-full bg-primary text-white rounded-2xl mx-4 mt-4 px-4 flex flex-col items-start justify-start relative overflow-hidden">
                     <header
@@ -439,7 +479,7 @@ function Page() {
                           onClick={() =>
                             setGamifiedData((prev) => ({
                               ...prev,
-                              currentCard: prev.currentCard + 1,
+                              currentCard: getNextCurrentCard(),
                             }))
                           }
                           disabled={
@@ -470,16 +510,28 @@ function Page() {
                     </span>
                   </section>
                   <section className="w-full mx-4 p-4 flex flex-row items-center justify-between">
-                    {getMappableOptions()?.map((option, idx) => {
-                      return (
-                        <Button2
-                          onClick={() => handleOptionClick(option)}
-                          key={idx}
-                        >
-                          {option}
-                        </Button2>
-                      );
-                    })}
+                    {gamifiedData?.correctedCards.includes(
+                      gamifiedData?.currentCard
+                    ) ? (
+                      <>
+                        <span className="text-xl text-primary">
+                          You had completed this card
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        {getMappableOptions()?.map((option, idx) => {
+                          return (
+                            <Button2
+                              onClick={() => handleOptionClick(option)}
+                              key={idx}
+                            >
+                              {option}
+                            </Button2>
+                          );
+                        })}
+                      </>
+                    )}
                   </section>
                 </main>
               ) : null}
