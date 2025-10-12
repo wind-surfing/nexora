@@ -1,0 +1,12 @@
+.fled {
+  animation: flee 5s !important;
+}
+
+@keyframes flee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(200px);
+  }
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import "@/styles/fled-styles.css";
 import Button from "@/components/shared/Button";
 import { Button as Button2 } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
@@ -79,6 +80,7 @@ function Page() {
     className: "",
     type: "temporary",
   });
+  const timeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
 
   const handleEnemyState = (
     src: string,
@@ -86,6 +88,10 @@ function Page() {
     className: string = "",
     type: "permanent" | "temporary" = "temporary"
   ) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     setEnemyState((prev) => ({
       ...prev,
       src: `/${src}.gif`,
@@ -94,17 +100,20 @@ function Page() {
       type: type,
     }));
 
-    if (type === "permanent") return;
-    const normalState = setTimeout(() => {
-      setEnemyState((prev) => ({
-        src: "/standing.gif",
-        alt: "Standing",
-        className: "",
-        type: "temporary",
-      }));
-    }, 5000);
-
-    return () => clearTimeout(normalState);
+    if (type === "permanent") {
+      timeoutRef.current = setTimeout(() => {
+        router.push("/home");
+      }, 4000);
+    } else {
+      timeoutRef.current = setTimeout(() => {
+        setEnemyState({
+          src: "/standing.gif",
+          alt: "Standing",
+          className: "",
+          type: "temporary",
+        });
+      }, 5000);
+    }
   };
 
   useEffect(() => {
@@ -665,11 +674,16 @@ function Page() {
                       src={enemyState.src}
                       alt={enemyState.alt}
                       layout="fill"
+                      className={enemyState.className}
                       style={{
                         transform: "scaleX(-1)",
                       }}
-                      className={enemyState.className}
                     />
+                    {gamifiedData.isCompleted ? (
+                      <h1 className="text-3xl text-primary">
+                        Congratulations on Winning!!!
+                      </h1>
+                    ) : null}
                   </div>
                 </section>
                 <section className="w-full m-4 p-4 flex flex-row items-center justify-center rounded-xl">

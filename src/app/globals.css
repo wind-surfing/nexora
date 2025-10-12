@@ -120,16 +120,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-.fled {
-  animation: flee 3000 ease-out 0 1 forwards;
-}
-
-@keyframes flee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(1000px);
-  }
-}
