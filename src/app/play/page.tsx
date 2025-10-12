@@ -26,8 +26,103 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useRouter, useSearchParams } from "next/navigation";
+import { CompoundCard, getCompoundCards } from "@/helper/idb";
+import { toast } from "sonner";
+
+interface GamifiedData {
+  numberOfCards: number;
+  healthLooseOnWrongByUser: number;
+  healthLooseOnCorrectByMonster: number;
+  maxUserHealth: number;
+  currentUserHealth: number;
+  userHealthAfterPotion: number;
+  healthPotions: number;
+  hintPotions: number;
+  monsterMaxHealth: number;
+  currentMonsterHealth: number;
+}
 
 function Page() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const flashcardId = searchParams.get("flashcard");
+  const [flashCardSet, setflashCardSet] = useState<CompoundCard>();
+  const [gamifiedData, setGamifiedData] = useState<GamifiedData>();
+
+  useEffect(() => {
+    const getFlashcardSet = async () => {
+      const response = await getCompoundCards();
+
+      const randomFlashcard = () => {
+        const randomIdx = Math.floor(Math.random() * response.length);
+        const id = response[randomIdx]?.id;
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.set("flashcard", id || "");
+        window.history.replaceState({}, "", newUrl.toString());
+        setflashCardSet(response[randomIdx]);
+        setGamifiedData({
+          numberOfCards: response[randomIdx]?.cards.length || 0,
+          healthLooseOnWrongByUser: 0,
+          healthLooseOnCorrectByMonster: 0,
+          maxUserHealth: 100,
+          currentUserHealth: 100,
+          userHealthAfterPotion: Math.min(100 + 30, 100),
+          healthPotions: 1,
+          hintPotions: 3,
+          monsterMaxHealth: 100,
+          currentMonsterHealth: 100,
+        });
+      };
+
+      if (!response[0]?.id) {
+        toast.error("No flashcard set found, please create one first");
+        router.push("/create");
+        return response;
+      }
+
+      if (!flashcardId) {
+        randomFlashcard();
+      } else {
+        const cardSet = response.find((set) => set.id === flashcardId);
+        if (cardSet) {
+          setflashCardSet(cardSet);
+          setGamifiedData({
+            numberOfCards: cardSet?.cards.length || 0,
+            healthLooseOnWrongByUser: 0,
+            healthLooseOnCorrectByMonster: 0,
+            maxUserHealth: 100,
+            currentUserHealth: 100,
+            userHealthAfterPotion: Math.min(100 + 30, 100),
+            healthPotions: 1,
+            hintPotions: 3,
+            monsterMaxHealth: 100,
+            currentMonsterHealth: 100,
+          });
+        } else {
+          toast.error("Flashcard of that id not found so showing a random one");
+          randomFlashcard();
+        }
+      }
+
+      toast.info("You must defeat the monster to obtain coins!");
+
+      return response;
+    };
+
+    getFlashcardSet();
+
+    return () => {};
+  }, [flashcardId]);
+
+  if (!flashCardSet?.id) {
+    return (
+      <div className="h-[calc(100vh-64px)] w-full flex flex-row items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
+
   return (
     <>
       <main className="flex flex-row items-center justify-center h-[calc(100vh-64px)] w-full px-4">
