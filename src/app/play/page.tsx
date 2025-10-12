@@ -1,6 +1,7 @@
 "use client";
 
 import Button from "@/components/shared/Button";
+import { Button as Button2 } from "@/components/ui/Button";
 import React, { useEffect, useState } from "react";
 import {
   FaArrowLeft,
@@ -58,6 +59,7 @@ function Page() {
     monsterMaxHealth: 100,
     currentMonsterHealth: 100,
   });
+  const [hint, setHint] = useState(0);
 
   useEffect(() => {
     const getFlashcardSet = async () => {
@@ -128,6 +130,59 @@ function Page() {
     return () => {};
   }, [flashcardId]);
 
+  const handleHint = () => {
+    setHint(gamifiedData?.currentCard || 1);
+    if (hint != gamifiedData?.currentCard) {
+      setGamifiedData((prev) => ({
+        ...prev,
+        hintPotions: Math.max(prev.hintPotions - 1, 0),
+      }));
+    }
+  };
+
+  const getMappableOptions = () => {
+    if (!flashCardSet) return [];
+    const option = [
+      ...flashCardSet.cards[gamifiedData.currentCard - 1]?.options,
+      flashCardSet.cards[gamifiedData.currentCard - 1]?.term,
+    ];
+    return option.sort(() => Math.random() - 0.5);
+  };
+
+  const handleOptionClick = (option: string) => {
+    if (!flashCardSet) return;
+
+    const correctAnswer =
+      flashCardSet.cards[gamifiedData.currentCard - 1]?.term;
+
+    if (option.toLowerCase() === correctAnswer.toLowerCase()) {
+      const newMonsterHealth = Math.max(
+        gamifiedData.currentMonsterHealth -
+          gamifiedData.healthLooseOnCorrectByMonster,
+        0
+      );
+      setGamifiedData((prev) => ({
+        ...prev,
+        currentCard: prev.currentCard + 1,
+        currentMonsterHealth: newMonsterHealth,
+      }));
+
+      toast.success("Correct! You hit the monster!");
+    } else {
+      const newUserHealth = Math.max(
+        gamifiedData.currentUserHealth - gamifiedData.healthLooseOnWrongByUser,
+        0
+      );
+      setGamifiedData((prev) => ({
+        ...prev,
+        currentUserHealth: newUserHealth,
+      }));
+      toast.error(
+        `Wrong! You got hurt! Try to use potion to recover your self`
+      );
+    }
+  };
+
   if (!flashCardSet?.id) {
     return (
       <div className="h-[calc(100vh-64px)] w-full flex flex-row items-center justify-center">
@@ -153,25 +208,25 @@ function Page() {
               <Button type="button" title="Turn these into Quiz"></Button>
               <div className="flex flex-row items-center justify-center gap-2">
                 <span className="flex flex-row items-center justify-center gap-1">
-                  <GiHealthPotion /> {gamifiedData?.healthPotions || 1}
+                  <GiHealthPotion /> {gamifiedData?.healthPotions ?? 1}
                 </span>
                 <span className="flex flex-row items-center justify-center gap-1">
-                  <GiMagicPotion /> {gamifiedData?.hintPotions || 3}
+                  <GiMagicPotion /> {gamifiedData?.hintPotions ?? 3}
                 </span>
               </div>
             </div>
           </header>
           <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-128px)]">
-            <div className="flex flex-row items-center justify-between w-full h-full gap-12">
+            <div className="flex flex-row items-center justify-between w-full h-full gap-4">
               {/* Flashcard content ought to be here */}
               {flashCardSet?.cards.length ? (
                 <main className="flex flex-col items-start justify-start w-5/8 h-full">
-                  <section className="aspect-video w-full bg-primary text-white rounded-2xl m-4 px-4 flex flex-col items-start justify-start relative overflow-hidden">
+                  <section className="aspect-[16/8] w-full bg-primary text-white rounded-2xl mx-4 mt-4 px-4 flex flex-col items-start justify-start relative overflow-hidden">
                     <header
                       style={{ zIndex: 10 }}
                       className="w-full flex flex-row items-center justify-between absolute top-4 left-0 px-6"
                     >
-                      <span className="flex flex-row items-center gap-2">
+                      <span className="flex flex-row items-center justify-center gap-2">
                         <Popover>
                           <PopoverTrigger>
                             <Tooltip>
@@ -197,6 +252,7 @@ function Page() {
                               <div className="grid gap-2">
                                 <div className="grid grid-cols-3 items-center gap-4">
                                   <Button
+                                    onClick={() => handleHint()}
                                     type="button"
                                     title="Confirm"
                                   ></Button>
@@ -205,7 +261,13 @@ function Page() {
                             </div>
                           </PopoverContent>
                         </Popover>
-                        <span className="sr-only">
+                        <span
+                          className={
+                            hint === gamifiedData.currentCard
+                              ? "flex flex-row items-center justify-center"
+                              : "sr-only"
+                          }
+                        >
                           {
                             flashCardSet.cards[gamifiedData?.currentCard - 1]
                               ?.hint
@@ -247,7 +309,7 @@ function Page() {
                       />
                     </div>
                   </section>
-                  <section className="w-full m-4 p-4 flex flex-row items-center justify-between rounded-xl">
+                  <section className="w-full mx-4 p-4 flex flex-row items-center justify-between rounded-xl">
                     <span className="flex flex-row items-center gap-2">
                       <span className="text-lg">HP</span>
                       <div className="h-6 w-24 rounded overflow-hidden border-2 border-gray-700 shadow-inner relative">
@@ -376,6 +438,18 @@ function Page() {
                         </TooltipContent>
                       </Tooltip>
                     </span>
+                  </section>
+                  <section className="w-full mx-4 p-4 flex flex-row items-center justify-between">
+                    {getMappableOptions().map((option, idx) => {
+                      return (
+                        <Button2
+                          onClick={() => handleOptionClick(option)}
+                          key={idx}
+                        >
+                          {option}
+                        </Button2>
+                      );
+                    })}
                   </section>
                 </main>
               ) : null}
