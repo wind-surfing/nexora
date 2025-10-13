@@ -25,7 +25,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useRouter, useSearchParams } from "next/navigation";
-import { CompoundCard, getCompoundCards, getImageByPath } from "@/helper/idb";
+import {
+  CompoundCard,
+  getCompoundCards,
+  getImageByPath,
+  updateCurrentUser,
+} from "@/helper/idb";
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
 
@@ -193,7 +198,7 @@ function PageContent() {
           currentUserHealth: 100,
           userHealthAfterPotion: Math.min(100 + 30, 100),
           healthPotions: 1,
-          hintPotions: 3,
+          hintPotions: Math.floor((updatedCardSet?.cards.length || 0) / 3),
           monsterMaxHealth: 100,
           currentMonsterHealth: 100,
         });
@@ -221,7 +226,7 @@ function PageContent() {
             currentUserHealth: 100,
             userHealthAfterPotion: Math.min(100 + 30, 100),
             healthPotions: 1,
-            hintPotions: 3,
+            hintPotions: Math.floor((updatedCardSet?.cards.length || 0) / 3),
             monsterMaxHealth: 100,
             currentMonsterHealth: 100,
           });
@@ -339,7 +344,7 @@ function PageContent() {
     return gamifiedData.currentCard;
   };
 
-  const handleOptionClick = (option: string) => {
+  const handleOptionClick = async (option: string) => {
     if (!flashCardSet) return;
 
     const correctAnswer =
@@ -366,6 +371,8 @@ function PageContent() {
         gamifiedData.numberOfCards
       ) {
         handleEnemyState("running", "Running", "fled", "permanent");
+        await updateCurrentUser(30);
+        toast.info("You obtained 30 nexoins!");
         toast.success("Congratulations! You've defeated the monster!");
         queueMicrotask(() => {
           confetti({
@@ -393,6 +400,8 @@ function PageContent() {
 
       if (newUserHealth <= 0) {
         handleEnemyState("attacking", "Attacking", "victory", "permanent");
+        await updateCurrentUser(-10);
+        toast.info("You loose 10 nexoins!");
         toast.error("Game Over! The monster has defeated you!");
       } else {
         handleEnemyState("attacking", "Attacking");

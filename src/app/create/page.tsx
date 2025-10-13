@@ -130,9 +130,16 @@ function Page() {
     }
 
     try {
+      await updateCurrentUser(-10);
+    } catch (error) {
+      toast.error("You donot have enough nexoins to generate flashcards");
+      setMainLoading(false);
+      return;
+    }
+
+    try {
       const response = await createFlashcards(images, cardSetData);
       if (response) {
-        await updateCurrentUser(-10);
         setCardSetDataList((prev) => [...prev, ...response]);
       } else {
         toast.error("Failed to get flashcards");
@@ -172,13 +179,20 @@ function Page() {
       .filter((card) => card.term && card.definition);
 
     try {
+      await updateCurrentUser(-10);
+    } catch (error) {
+      toast.error("You donot have enough nexoins to generate flashcards");
+      setSecondaryLoading(0);
+      return;
+    }
+
+    try {
       const response = await createFlashcard(images, cardSetData, {
         examples: subContents,
         content: contentCard,
       });
 
       if (response) {
-        await updateCurrentUser(-10);
         setCardSetDataList((prev) => {
           const newArray = [...prev];
           newArray[index] = response;
