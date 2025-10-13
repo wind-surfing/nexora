@@ -1,4 +1,5 @@
 .fled {
+  transform: translateX(500px);
   animation: flee 5s !important;
 }
 
