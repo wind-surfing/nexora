@@ -35,7 +35,8 @@ const FlashcardListing = ({
       if (flashcard) {
         const images = flashcard.cards
           .map((card) => card.src)
-          .filter((src) => src && src.trim() !== "");
+          .filter((src) => src && src.trim() !== "")
+          .filter((src) => src && src.startsWith("/**idb**/"));
         const usableImages = await Promise.all(
           images.map(async (src) => await getImageByPath(src, "dataUrl"))
         );

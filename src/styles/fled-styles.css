@@ -10,3 +10,22 @@
     transform: translateX(500px);
   }
 }
+
+.victory {
+  animation: victory 5s !important;
+}
+
+@keyframes victory {
+  0% {
+    transform: translateY(0);
+    scale: 1;
+  }
+  50% {
+    transform: translateY(-20px);
+    scale: 1.1;
+  }
+  100% {
+    transform: translateY(0);
+    scale: 1;
+  }
+}

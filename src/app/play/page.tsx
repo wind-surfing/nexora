@@ -146,7 +146,9 @@ function PageContent() {
         if (response.length > 0) {
           const images = response[cardIdx].cards
             .map((card) => card.src)
-            .filter((src) => src && src.trim() !== "");
+            .filter((src) => src && src.trim() !== "")
+            .filter((src) => src && src.startsWith("/**idb**/"));
+
           const usableImages = await Promise.all(
             images.map(async (src) => await getImageByPath(src, "dataUrl"))
           );
@@ -382,18 +384,20 @@ function PageContent() {
 
       setGamifiedData((prev) => ({
         ...prev,
-        isCompleted:
-          prev.correctedCards.length === prev.numberOfCards &&
-          prev.currentMonsterHealth <= 0,
+        isCompleted: newUserHealth <= 0,
         userHealthAfterPotion: Math.min(newUserHealth + 30, prev.maxUserHealth),
         currentUserHealth: newUserHealth,
       }));
 
-      handleEnemyState("attacking", "Attacking");
-
-      toast.error(
-        `Wrong! You got hurt! Try to use potion to recover your self`
-      );
+      if (newUserHealth <= 0) {
+        handleEnemyState("attacking", "Attacking", "victory", "permanent");
+        toast.error("Game Over! The monster has defeated you!");
+      } else {
+        handleEnemyState("attacking", "Attacking");
+        toast.error(
+          `Wrong! You got hurt! Try to use potion to recover your self`
+        );
+      }
     }
   };
 
@@ -694,9 +698,15 @@ function PageContent() {
                       }}
                     />
                     {gamifiedData.isCompleted ? (
-                      <h1 className="text-3xl text-primary">
-                        Congratulations on Winning!!!
-                      </h1>
+                      gamifiedData.currentUserHealth <= 0 ? (
+                        <h1 className="text-3xl text-primary">
+                          The Monster won!!!
+                        </h1>
+                      ) : (
+                        <h1 className="text-3xl text-primary">
+                          Congratulations on Winning!!!
+                        </h1>
+                      )
                     ) : null}
                   </div>
                 </section>
