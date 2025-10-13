@@ -25,12 +25,12 @@ function Page() {
         if (user) {
           setUser({
             username: user.username,
-            currentSignalGauge: 5,
-            requiredSignalGauge: 0,
-            currentSignalLevel: 0,
-            lastSignalAt: new Date(),
+            currentSignalGauge: user.currentSignalGauge || 5,
+            requiredSignalGauge: user.requiredSignalGauge,
+            currentSignalLevel: user.currentSignalLevel,
+            lastSignalAt: user.lastSignalAt,
             nexoins: user.nexoins,
-            ownedItems: null,
+            ownedItems: user.ownedItems,
           });
         }
       } catch (error) {

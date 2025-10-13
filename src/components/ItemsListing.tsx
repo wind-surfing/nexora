@@ -9,6 +9,9 @@ import { RiCopperCoinFill } from "react-icons/ri";
 import { Items, User } from "@/types/users";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import Button from "./shared/Button";
+import { updateCurrentUser } from "@/helper/idb";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface ItemsListingProps {
   user: User;
@@ -18,8 +21,9 @@ interface ItemsListingProps {
 
 const ItemsListing = ({ user, items, index }: ItemsListingProps) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(1);
   const [signalGauge, setSignalGauge] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
     const percentage =
@@ -34,6 +38,27 @@ const ItemsListing = ({ user, items, index }: ItemsListingProps) => {
 
     return () => clearTimeout(timer);
   }, [index]);
+
+  const handlePurchase = async () => {
+    if (user.nexoins < items.price * count) {
+      toast.error("Not enough nexoins");
+      return;
+    }
+
+    try {
+      await updateCurrentUser({
+        nexoins: user.nexoins - items.price * count,
+        ownedItems: {
+          ...(user.ownedItems ?? {}),
+          [items.specialId]: (user.ownedItems?.[items.specialId] ?? 0) + count,
+        },
+      });
+      toast.success("Purchase successful");
+      router.push("/home");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   if (!items || !isVisible) return <ItemsPlaceholder />;
 
@@ -95,7 +120,10 @@ const ItemsListing = ({ user, items, index }: ItemsListingProps) => {
 
                     <div className="flex flex-row items-center justify-between">
                       <span className="flex items-center justify-center gap-2">
-                        <Button title={`Buy @${items.price * count}`} />
+                        <Button
+                          onClick={() => handlePurchase()}
+                          title={`Buy @${items.price * count}`}
+                        />
                       </span>
                     </div>
                   </div>
