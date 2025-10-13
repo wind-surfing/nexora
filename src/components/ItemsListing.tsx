@@ -6,30 +6,7 @@ import { cn } from "@/lib/utils";
 import ImageSlider from "./ImageSlider";
 import { Badge } from "./ui/badge";
 import { RiCopperCoinFill } from "react-icons/ri";
-
-interface Items {
-  specialId: number;
-  srcs: string[];
-  title: string;
-  description: string;
-  price: number;
-  badge: string;
-  theme: string;
-  requiredSignalGauge: number;
-}
-
-interface User {
-  username: string;
-  currentSignalGauge: number;
-  requiredSignalGauge: number;
-  currentSignalLevel: number;
-  lastSignalAt: Date;
-  nexoins: number;
-  ownedItems: {
-    specialId: number;
-    count: number;
-  };
-}
+import { Items, User } from "@/types/users";
 
 interface ItemsListingProps {
   user: User;
