@@ -83,13 +83,15 @@ const ImageSlider = ({ urls }: ImageSliderProps) => {
         className="h-full w-full"
       >
         {urls.map((url, i) => (
-          <SwiperSlide key={i} className="-z-10 relative h-full w-full">
+          <SwiperSlide
+            key={i}
+            className="relative h-full w-full bg-white flex items-center justify-center"
+          >
             <Image
               priority
-              className="object-cover w-full h-full"
-              height="192"
-              style={{ aspectRatio: "341/192", objectFit: "cover" }}
-              width="341"
+              className="mx-auto h-full w-auto object-contain"
+              height={192}
+              width={341}
               placeholder="blur"
               blurDataURL={url || "/placeholder.svg"}
               quality={100}

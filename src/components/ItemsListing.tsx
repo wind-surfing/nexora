@@ -50,10 +50,10 @@ const ItemsListing = ({ user, items, index }: ItemsListingProps) => {
             <p className="mt-1 text-sm text-gray-500 line-clamp-2">
               {items.description}
             </p>
-            <p className="mt-1 font-medium text-sm text-gray-900 flex flex-row items-center justify-center gap-1">
+            <p className="mt-1 font-medium text-sm text-gray-900 flex flex-row items-center gap-1">
               Price: <RiCopperCoinFill /> {items.price}
             </p>
-            <div className="flex flex-row items-center justify-center">
+            <div className="mt-3 flex flex-row items-center justify-center">
               <div className="h-6 w-full rounded overflow-hidden border-2 border-gray-700 shadow-inner relative">
                 <div
                   className="h-full bg-primary/60 transition-all duration-1000 absolute top-0 left-0"

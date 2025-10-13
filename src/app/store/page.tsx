@@ -1,3 +1,5 @@
+"use client";
+
 import ItemsListing from "@/components/ItemsListing";
 import Button from "@/components/shared/Button";
 import { itemsList } from "@/config";
@@ -23,12 +25,12 @@ function Page() {
         if (user) {
           setUser({
             username: user.username,
-            currentSignalGauge: user.currentSignalGauge,
-            requiredSignalGauge: user.requiredSignalGauge,
-            currentSignalLevel: user.currentSignalLevel,
-            lastSignalAt: user.lastSignalAt,
+            currentSignalGauge: 2,
+            requiredSignalGauge: 0,
+            currentSignalLevel: 0,
+            lastSignalAt: new Date(),
             nexoins: user.nexoins,
-            ownedItems: user.ownedItems,
+            ownedItems: null,
           });
         }
       } catch (error) {
@@ -37,8 +39,6 @@ function Page() {
     };
 
     fetchUser();
-
-    return () => {};
   }, []);
 
   return (
