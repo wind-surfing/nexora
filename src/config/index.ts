@@ -54,6 +54,16 @@ export const singleCardSetData: Card = {
   category: "",
 };
 
+export const mockUser = {
+  username: "",
+  currentSignalGauge: 0,
+  requiredSignalGauge: 0,
+  currentSignalLevel: 0,
+  lastSignalAt: new Date(),
+  nexoins: 0,
+  ownedItems: null,
+};
+
 export const itemsList: Items[] = [
   {
     specialId: 1,

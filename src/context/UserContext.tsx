@@ -1,0 +1,70 @@
+import { mockUser } from "@/config";
+import { getCredentials } from "@/helper/idb";
+import { User } from "@/types/users";
+import React, { createContext, useContext, useEffect, useState } from "react";
+
+interface UserContextType {
+  user: User | null;
+  loading: boolean;
+  updateUser: (updates: Partial<User>) => void;
+  setUser: React.Dispatch<React.SetStateAction<User>>;
+  refreshUser: () => Promise<void>;
+}
+
+const UserContext = createContext<UserContextType | null>(null);
+
+export const UserProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User>(mockUser);
+  const [loading, setLoading] = useState(true);
+
+  const refreshUser = async () => {
+    setLoading(true);
+
+    try {
+      const user = await getCredentials();
+
+      if (user) {
+        setUser({
+          username: user.username,
+          currentSignalGauge: user.currentSignalGauge || 5,
+          requiredSignalGauge: user.requiredSignalGauge,
+          currentSignalLevel: user.currentSignalLevel,
+          lastSignalAt: user.lastSignalAt,
+          nexoins: user.nexoins,
+          ownedItems: user.ownedItems,
+        });
+      } else {
+        setUser(mockUser);
+      }
+    } catch (error) {
+      setUser(mockUser);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshUser();
+  }, []);
+
+  const updateUser = (updates: Partial<User>) => {
+    setUser((prev) => (prev ? { ...prev, ...updates } : prev));
+  };
+
+  return (
+    <UserContext.Provider
+      value={{ user, loading, updateUser, setUser, refreshUser }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
+};
+
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("useUser must be used within a UserProvider");
+  }
+
+  return context;
+};

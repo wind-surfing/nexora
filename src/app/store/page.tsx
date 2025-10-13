@@ -2,21 +2,13 @@
 
 import ItemsListing from "@/components/ItemsListing";
 import Button from "@/components/shared/Button";
-import { itemsList } from "@/config";
+import { itemsList, mockUser } from "@/config";
 import { getCredentials } from "@/helper/idb";
 import { User } from "@/types/users";
 import React, { useEffect, useState } from "react";
 
 function Page() {
-  const [user, setUser] = useState<User>({
-    username: "",
-    currentSignalGauge: 0,
-    requiredSignalGauge: 0,
-    currentSignalLevel: 0,
-    lastSignalAt: new Date(),
-    nexoins: 0,
-    ownedItems: null,
-  });
+  const [user, setUser] = useState<User>(mockUser);
 
   useEffect(() => {
     const fetchUser = async () => {
