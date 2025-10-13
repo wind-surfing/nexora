@@ -7,6 +7,8 @@ import ImageSlider from "./ImageSlider";
 import { Badge } from "./ui/badge";
 import { RiCopperCoinFill } from "react-icons/ri";
 import { Items, User } from "@/types/users";
+import { FaMinus, FaPlus } from "react-icons/fa6";
+import Button from "./shared/Button";
 
 interface ItemsListingProps {
   user: User;
@@ -16,6 +18,14 @@ interface ItemsListingProps {
 
 const ItemsListing = ({ user, items, index }: ItemsListingProps) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
+
+  const [signalGauge, setSignalGauge] = useState(0);
+
+  useEffect(() => {
+    const percentage =
+      (user.currentSignalGauge / items.requiredSignalGauge) * 100;
+    setSignalGauge(percentage);
+  }, [items, user]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -54,28 +64,50 @@ const ItemsListing = ({ user, items, index }: ItemsListingProps) => {
               Price: <RiCopperCoinFill /> {items.price}
             </p>
             <div className="mt-3 flex flex-row items-center justify-center">
-              <div className="h-6 w-full rounded overflow-hidden border-2 border-gray-700 shadow-inner relative">
-                <div
-                  className="h-full bg-primary/60 transition-all duration-1000 absolute top-0 left-0"
-                  style={{
-                    width: `${Math.min(
-                      (user.currentSignalGauge / items.requiredSignalGauge) *
-                        100,
-                      100
-                    ).toFixed(2)}%`,
-                  }}
-                ></div>
-                <span
-                  className="absolute inset-0 flex items-center justify-center text-[#2A2A2A]"
-                  style={{ zIndex: 20 }}
-                >
-                  {Math.min(
-                    (user.currentSignalGauge / items.requiredSignalGauge) * 100,
-                    100
-                  ).toFixed(2)}
-                  %
-                </span>
-              </div>
+              {signalGauge >= 100 ? (
+                <>
+                  <div className="h-6 w-full flex flex-row items-center justify-between">
+                    <div className="flex flex-row items-center justify-center gap-2">
+                      <span className="flex items-center justify-center">
+                        <FaMinus />
+                      </span>
+
+                      <input
+                        type="text"
+                        defaultValue={0}
+                        className="h-6 w-8 text-center border border-zinc-300 rounded focus:outline-none focus:ring-0 focus:border-zinc-400 transition-colors"
+                      />
+
+                      <span className="flex items-center justify-center">
+                        <FaPlus />
+                      </span>
+                    </div>
+
+                    <div className="flex flex-row items-center justify-between">
+                      <span className="flex items-center justify-center gap-2">
+                        <Button title="Buy for 100 nexoins" />
+                      </span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="h-6 w-full rounded overflow-hidden border-2 border-gray-700 shadow-inner relative">
+                    <div
+                      className="h-full bg-primary/60 transition-all duration-1000 absolute top-0 left-0"
+                      style={{
+                        width: `${Math.min(signalGauge, 100).toFixed(2)}%`,
+                      }}
+                    ></div>
+                    <span
+                      className="absolute inset-0 flex items-center justify-center text-[#2A2A2A]"
+                      style={{ zIndex: 20 }}
+                    >
+                      {Math.min(signalGauge, 100).toFixed(2)}%
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

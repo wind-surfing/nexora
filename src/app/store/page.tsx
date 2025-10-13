@@ -25,7 +25,7 @@ function Page() {
         if (user) {
           setUser({
             username: user.username,
-            currentSignalGauge: 2,
+            currentSignalGauge: 5,
             requiredSignalGauge: 0,
             currentSignalLevel: 0,
             lastSignalAt: new Date(),
