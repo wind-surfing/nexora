@@ -18,7 +18,7 @@ interface ItemsListingProps {
 
 const ItemsListing = ({ user, items, index }: ItemsListingProps) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
-
+  const [count, setCount] = useState(0);
   const [signalGauge, setSignalGauge] = useState(0);
 
   useEffect(() => {
@@ -69,23 +69,33 @@ const ItemsListing = ({ user, items, index }: ItemsListingProps) => {
                   <div className="h-6 w-full flex flex-row items-center justify-between">
                     <div className="flex flex-row items-center justify-center gap-2">
                       <span className="flex items-center justify-center">
-                        <FaMinus />
+                        <FaMinus
+                          onClick={() =>
+                            setCount((prev) => Math.max(prev - 1, 0))
+                          }
+                        />
                       </span>
 
                       <input
                         type="text"
-                        defaultValue={0}
+                        value={count}
+                        onChange={(e) => setCount(() => +e.target.value)}
                         className="h-6 w-8 text-center border border-zinc-300 rounded focus:outline-none focus:ring-0 focus:border-zinc-400 transition-colors"
                       />
 
-                      <span className="flex items-center justify-center">
+                      <span
+                        onClick={() =>
+                          setCount((prev) => Math.max(prev + 1, 0))
+                        }
+                        className="flex items-center justify-center"
+                      >
                         <FaPlus />
                       </span>
                     </div>
 
                     <div className="flex flex-row items-center justify-between">
                       <span className="flex items-center justify-center gap-2">
-                        <Button title="Buy for 100 nexoins" />
+                        <Button title={`Buy @${items.price * count}`} />
                       </span>
                     </div>
                   </div>
