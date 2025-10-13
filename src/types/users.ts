@@ -17,7 +17,6 @@ export interface User {
   lastSignalAt: Date;
   nexoins: number;
   ownedItems: {
-    specialId: number;
-    count: number;
+    [specialId: number]: number;
   } | null;
 }

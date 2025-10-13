@@ -10,7 +10,6 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
 
-
 function Page() {
   const [data, setData] = React.useState<{
     username: string;
@@ -36,7 +35,15 @@ function Page() {
         username: credentialInfo?.username,
         password: credentialInfo?.password,
         nexoins: credentialInfo?.coins || 0,
-      })
+        currentSignalGauge: 0,
+        requiredSignalGauge: 100,
+        currentSignalLevel: 1,
+        lastSignalAt: new Date(),
+        ownedItems: {
+          1: 1,
+          2: 3,
+        },
+      });
       toast.success("Login successful!");
       router.push("/home");
     } else {

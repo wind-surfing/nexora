@@ -5,6 +5,13 @@ interface UserCredentials {
   username: string;
   password: string;
   nexoins: number;
+  currentSignalGauge: number;
+  requiredSignalGauge: number;
+  currentSignalLevel: number;
+  lastSignalAt: Date;
+  ownedItems: {
+    [specialId: number]: number;
+  } | null;
 }
 
 export interface CompoundCard {
@@ -95,6 +102,11 @@ export const storeCredentials = async (
       username: credentials.username,
       password: hashedPassword,
       nexoins: credentials.nexoins,
+      currentSignalGauge: credentials.currentSignalGauge,
+      requiredSignalGauge: credentials.requiredSignalGauge,
+      currentSignalLevel: credentials.currentSignalLevel,
+      lastSignalAt: credentials.lastSignalAt,
+      ownedItems: credentials.ownedItems,
     };
 
     const transaction = db.transaction([STORE_NAME], "readwrite");
@@ -143,6 +155,11 @@ export const getCredentials = async (): Promise<UserCredentials | null> => {
             username: result.username,
             password: result.password,
             nexoins: result.nexoins,
+            currentSignalGauge: result.currentSignalGauge,
+            requiredSignalGauge: result.requiredSignalGauge,
+            currentSignalLevel: result.currentSignalLevel,
+            lastSignalAt: result.lastSignalAt,
+            ownedItems: result.ownedItems,
           };
           resolve(credentials as UserCredentials);
         } else {
