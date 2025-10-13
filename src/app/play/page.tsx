@@ -604,14 +604,14 @@ function PageContent() {
                       <Tooltip>
                         <TooltipTrigger
                           type="button"
-                          className="flex flex-row items-center justify-center p-2 h-10 w-14 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer"
+                          disabled={gamifiedData.currentCard <= 1}
+                          className="flex flex-row items-center justify-center p-2 h-10 w-14 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer disabled:bg-muted/20 disabled:cursor-not-allowed disabled:text-black/40"
                           onClick={() =>
                             setGamifiedData((prev) => ({
                               ...prev,
                               currentCard: prev.currentCard - 1,
                             }))
                           }
-                          disabled={gamifiedData.currentCard <= 1}
                         >
                           <FaArrowLeft />
                         </TooltipTrigger>
@@ -622,16 +622,16 @@ function PageContent() {
                       <Tooltip>
                         <TooltipTrigger
                           type="button"
-                          className="flex flex-row items-center justify-center p-2 h-10 w-14 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer"
+                          disabled={
+                            gamifiedData.currentCard >=
+                            gamifiedData.numberOfCards
+                          }
+                          className="flex flex-row items-center justify-center p-2 h-10 w-14 rounded-full bg-muted/50 hover:bg-muted text-primary cursor-pointer disabled:bg-muted/20 disabled:cursor-not-allowed disabled:text-black/40"
                           onClick={() =>
                             setGamifiedData((prev) => ({
                               ...prev,
                               currentCard: getNextCurrentCard(),
                             }))
-                          }
-                          disabled={
-                            gamifiedData.currentCard >=
-                            gamifiedData.numberOfCards
                           }
                         >
                           <FaArrowRight />
@@ -670,6 +670,7 @@ function PageContent() {
                         {mappableOptions?.map((option, idx) => {
                           return (
                             <Button2
+                              className="cursor-pointer"
                               onClick={() => handleOptionClick(option)}
                               key={idx}
                             >
