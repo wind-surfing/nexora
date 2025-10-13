@@ -3,7 +3,7 @@
 import "@/styles/fled-styles.css";
 import Button from "@/components/shared/Button";
 import { Button as Button2 } from "@/components/ui/button";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import {
   FaArrowLeft,
   FaArrowRight,
@@ -117,7 +117,7 @@ function PageContent() {
     if (type === "permanent") {
       timeoutRef.current = setTimeout(() => {
         router.push("/home");
-      }, 4000);
+      }, 3000);
     } else {
       timeoutRef.current = setTimeout(() => {
         setEnemyState({
@@ -126,7 +126,7 @@ function PageContent() {
           className: "",
           type: "temporary",
         });
-      }, 5000);
+      }, 3000);
     }
   };
 
@@ -302,15 +302,17 @@ function PageContent() {
     });
   };
 
-  const getMappableOptions = () => {
+  const mappableOptions = useMemo(() => {
     if (!flashCardSet || gamifiedData.currentCard > gamifiedData.numberOfCards)
       return [];
-    const option = [
+
+    const options = [
       ...flashCardSet.cards[gamifiedData.currentCard - 1]?.options,
       flashCardSet.cards[gamifiedData.currentCard - 1]?.term,
     ];
-    return option.sort(() => Math.random() - 0.5);
-  };
+
+    return options.sort(() => Math.random() - 0.5);
+  }, [flashCardSet, gamifiedData.currentCard, gamifiedData.numberOfCards]);
 
   // I used my entire brain cell but still couldn't figure out so used AI here
   const getNextCurrentCard = () => {
@@ -540,14 +542,14 @@ function PageContent() {
                       <span className="text-lg">HP</span>
                       <div className="h-6 w-24 rounded overflow-hidden border-2 border-gray-700 shadow-inner relative">
                         <div
-                          className="h-full bg-primary/60 transition-all duration-300 absolute top-0 left-0"
+                          className="h-full bg-primary/60 transition-all duration-1000 absolute top-0 left-0"
                           style={{
                             width:
                               gamifiedData?.currentUserHealth.toFixed(2) + "%",
                           }}
                         ></div>
                         <div
-                          className="h-full bg-primary/5 transition-all duration-300 absolute top-0 left-0"
+                          className="h-full bg-primary/5 transition-all duration-1000 absolute top-0 left-0"
                           style={{
                             width:
                               gamifiedData?.userHealthAfterPotion.toFixed(2) +
@@ -665,7 +667,7 @@ function PageContent() {
                       </>
                     ) : (
                       <>
-                        {getMappableOptions()?.map((option, idx) => {
+                        {mappableOptions?.map((option, idx) => {
                           return (
                             <Button2
                               onClick={() => handleOptionClick(option)}
@@ -715,7 +717,7 @@ function PageContent() {
                     <span className="text-lg">HP</span>
                     <div className="h-6 w-24 rounded overflow-hidden border-2 border-gray-700 shadow-inner relative">
                       <div
-                        className="h-full bg-destructive/60 transition-all duration-300 absolute top-0 left-0"
+                        className="h-full bg-destructive/60 transition-all duration-1000 absolute top-0 left-0"
                         style={{
                           width:
                             gamifiedData?.currentMonsterHealth.toFixed(2) + "%",
