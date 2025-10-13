@@ -1,4 +1,5 @@
 import { Card } from "@/types/cards";
+import { Items } from "@/types/users";
 
 export const credentials = [
   {
@@ -52,6 +53,29 @@ export const singleCardSetData: Card = {
   theme: "",
   category: "",
 };
+
+export const itemsList: Items[] = [
+  {
+    specialId: 1,
+    srcs: ["/health-potion.jpg"],
+    title: "Health Potion",
+    description: "Health potion comes in handy to make yourself feel better",
+    price: 100,
+    badge: "",
+    theme: "#00ff00",
+    requiredSignalGauge: 5,
+  },
+  {
+    specialId: 2,
+    srcs: ["/hint-potion.jpg"],
+    title: "Hint Potion",
+    description: "Everyone deserves a hint",
+    price: 100,
+    badge: "",
+    theme: "#ffff00",
+    requiredSignalGauge: 5,
+  },
+];
 
 export type ShortcutConfig = {
   category: string;

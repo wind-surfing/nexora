@@ -1,5 +1,6 @@
 import ItemsListing from "@/components/ItemsListing";
 import Button from "@/components/shared/Button";
+import { itemsList } from "@/config";
 import { getCredentials } from "@/helper/idb";
 import { User } from "@/types/users";
 import React, { useEffect, useState } from "react";
