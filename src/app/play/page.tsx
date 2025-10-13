@@ -371,8 +371,12 @@ function PageContent() {
         gamifiedData.numberOfCards
       ) {
         handleEnemyState("running", "Running", "fled", "permanent");
-        await updateCurrentUser(30);
-        toast.info("You obtained 30 nexoins!");
+        try {
+          await updateCurrentUser(30);
+          toast.info("You obtained 30 nexoins!");
+        } catch (error) {
+          toast.error("Please login to earn nexoins!");
+        }
         toast.success("Congratulations! You've defeated the monster!");
         queueMicrotask(() => {
           confetti({
@@ -400,8 +404,12 @@ function PageContent() {
 
       if (newUserHealth <= 0) {
         handleEnemyState("attacking", "Attacking", "victory", "permanent");
-        await updateCurrentUser(-10);
-        toast.info("You loose 10 nexoins!");
+        try {
+          await updateCurrentUser(-10);
+          toast.info("You loose 10 nexoins!");
+        } catch (error) {
+          toast.error("Please login to earn nexoins!");
+        }
         toast.error("Game Over! The monster has defeated you!");
       } else {
         handleEnemyState("attacking", "Attacking");
