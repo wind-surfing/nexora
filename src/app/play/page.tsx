@@ -251,6 +251,24 @@ function PageContent() {
     }
   };
 
+  const handleSignalGraph = () => {};
+
+  const getSpeechSignal = (text: string) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      toast.error("Speech Synthesis not supported in this browser.");
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.onstart = () => handleSignalGraph();
+    utterance.onend = () => {};
+    utterance.volume = 1;
+    utterance.lang = "en-US";
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    window.speechSynthesis.speak(utterance);
+  };
+
   const handleHealth = () => {
     if ((user.ownedItems.health || 0) > 0) {
       setGamifiedData((prev) => ({
@@ -525,7 +543,16 @@ function PageContent() {
                       </span>
                       <span className="flex flex-row items-center gap-2">
                         <Tooltip>
-                          <TooltipTrigger type="button">
+                          <TooltipTrigger
+                            onClick={() =>
+                              getSpeechSignal(
+                                flashCardSet?.cards[
+                                  gamifiedData?.currentCard - 1
+                                ]?.definition || ""
+                              )
+                            }
+                            type="button"
+                          >
                             <AiFillSound className="text-xl" />
                           </TooltipTrigger>
                           <TooltipContent>
