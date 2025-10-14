@@ -10,8 +10,8 @@ interface UserCredentials {
   currentSignalLevel: number;
   lastSignalAt: Date;
   ownedItems: {
-    [specialId: number]: number;
-  } | null;
+    [specialId: string]: number;
+  };
 }
 
 export interface CompoundCard {

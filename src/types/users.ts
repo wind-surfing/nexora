@@ -1,5 +1,5 @@
 export interface Items {
-  specialId: number;
+  specialId: string;
   srcs: string[];
   title: string;
   description: string;
@@ -17,6 +17,6 @@ export interface User {
   lastSignalAt: Date;
   nexoins: number;
   ownedItems: {
-    [specialId: number]: number;
-  } | null;
+    [specialId: string]: number;
+  };
 }

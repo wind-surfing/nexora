@@ -1,5 +1,5 @@
 import { Card } from "@/types/cards";
-import { Items } from "@/types/users";
+import { Items, User } from "@/types/users";
 
 export const credentials = [
   {
@@ -54,19 +54,22 @@ export const singleCardSetData: Card = {
   category: "",
 };
 
-export const mockUser = {
+export const mockUser: User = {
   username: "",
   currentSignalGauge: 0,
   requiredSignalGauge: 0,
   currentSignalLevel: 0,
   lastSignalAt: new Date(),
   nexoins: 0,
-  ownedItems: null,
+  ownedItems: {
+    health: 0,
+    hint: 0,
+  },
 };
 
 export const itemsList: Items[] = [
   {
-    specialId: 1,
+    specialId: "health",
     srcs: ["/health-potion.jpg"],
     title: "Health Potion",
     description: "Health potion comes in handy to make yourself feel better",
@@ -76,7 +79,7 @@ export const itemsList: Items[] = [
     requiredSignalGauge: 5,
   },
   {
-    specialId: 2,
+    specialId: "hint",
     srcs: ["/hint-potion.jpg"],
     title: "Hint Potion",
     description: "Everyone deserves a hint",

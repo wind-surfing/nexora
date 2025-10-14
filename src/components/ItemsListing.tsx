@@ -9,7 +9,6 @@ import { RiCopperCoinFill } from "react-icons/ri";
 import { Items } from "@/types/users";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import Button from "./shared/Button";
-import { updateCurrentUser } from "@/helper/idb";
 import { toast } from "sonner";
 import { useUser } from "@/context/UserContext";
 import { mockUser } from "@/config";
@@ -53,7 +52,6 @@ const ItemsListing = ({ items, index }: ItemsListingProps) => {
           [items.specialId]: (user.ownedItems?.[items.specialId] ?? 0) + count,
         },
       };
-      // await updateCurrentUser(updates);
       updateUser(updates);
 
       toast.success("Purchase successful");

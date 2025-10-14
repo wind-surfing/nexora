@@ -40,8 +40,8 @@ function Page() {
         currentSignalLevel: 1,
         lastSignalAt: new Date(),
         ownedItems: {
-          1: 1,
-          2: 3,
+          health: 1,
+          hint: 3,
         },
       });
       toast.success("Login successful!");
