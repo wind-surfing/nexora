@@ -25,14 +25,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  CompoundCard,
-  getCompoundCards,
-  getImageByPath,
-  updateCurrentUser,
-} from "@/helper/idb";
+import { CompoundCard, getCompoundCards, getImageByPath } from "@/helper/idb";
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
+import { useUser } from "@/context/UserContext";
 
 interface GamifiedData {
   isCompleted: boolean;
@@ -43,9 +39,7 @@ interface GamifiedData {
   healthLooseOnCorrectByMonster: number;
   maxUserHealth: number;
   currentUserHealth: number;
-  userHealthAfterPotion: number;
-  healthPotions: number;
-  hintPotions: number;
+  userHealthAfterHealthPotion: number;
   monsterMaxHealth: number;
   currentMonsterHealth: number;
 }
@@ -75,6 +69,7 @@ function PageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const flashcardId = searchParams.get("flashcard");
+  const { user, updateUser } = useUser();
   // const [mode, setMode] = useState<"magic" | "review">("magic");
   const [flashCardSet, setFlashCardSet] = useState<CompoundCard>();
   const [gamifiedData, setGamifiedData] = useState<GamifiedData>({
@@ -86,9 +81,7 @@ function PageContent() {
     healthLooseOnCorrectByMonster: 100,
     maxUserHealth: 100,
     currentUserHealth: 100,
-    userHealthAfterPotion: 100,
-    healthPotions: 1,
-    hintPotions: 3,
+    userHealthAfterHealthPotion: 100,
     monsterMaxHealth: 100,
     currentMonsterHealth: 100,
   });
@@ -196,9 +189,7 @@ function PageContent() {
             100 / (updatedCardSet?.cards.length || 1),
           maxUserHealth: 100,
           currentUserHealth: 100,
-          userHealthAfterPotion: Math.min(100 + 30, 100),
-          healthPotions: 1,
-          hintPotions: Math.floor((updatedCardSet?.cards.length || 0) / 3),
+          userHealthAfterHealthPotion: Math.min(100 + 30, 100),
           monsterMaxHealth: 100,
           currentMonsterHealth: 100,
         });
@@ -224,9 +215,7 @@ function PageContent() {
               100 / (updatedCardSet?.cards.length || 1),
             maxUserHealth: 100,
             currentUserHealth: 100,
-            userHealthAfterPotion: Math.min(100 + 30, 100),
-            healthPotions: 1,
-            hintPotions: Math.floor((updatedCardSet?.cards.length || 0) / 3),
+            userHealthAfterHealthPotion: Math.min(100 + 30, 100),
             monsterMaxHealth: 100,
             currentMonsterHealth: 100,
           });
@@ -247,13 +236,15 @@ function PageContent() {
   }, [flashcardId, router]);
 
   const handleHint = () => {
-    setHint(gamifiedData?.currentCard || 1);
     if (hint != gamifiedData?.currentCard) {
-      if (gamifiedData.hintPotions > 0) {
-        setGamifiedData((prev) => ({
-          ...prev,
-          hintPotions: Math.max(prev.hintPotions - 1, 0),
-        }));
+      if ((user.ownedItems.hint || 0) > 0) {
+        setHint(gamifiedData?.currentCard || 1);
+        updateUser({
+          ownedItems: {
+            ...user.ownedItems,
+            hint: Math.max(user.ownedItems.hint - 1, 0),
+          },
+        });
       } else {
         toast.error("You don't have enough hint potions");
       }
@@ -261,13 +252,21 @@ function PageContent() {
   };
 
   const handleHealth = () => {
-    if (gamifiedData.healthPotions > 0) {
+    if ((user.ownedItems.health || 0) > 0) {
       setGamifiedData((prev) => ({
         ...prev,
-        healthPotions: Math.max(prev.healthPotions - 1, 0),
         currentUserHealth: Math.min(prev.currentUserHealth + 30, 100),
-        userHealthAfterPotion: Math.min(prev.userHealthAfterPotion + 30, 100),
+        userHealthAfterHealthPotion: Math.min(
+          prev.userHealthAfterHealthPotion + 30,
+          100
+        ),
       }));
+      updateUser({
+        ownedItems: {
+          ...user.ownedItems,
+          health: Math.max(user.ownedItems.health - 1, 0),
+        },
+      });
     } else {
       toast.error("You don't have enough health potions");
     }
@@ -372,7 +371,7 @@ function PageContent() {
       ) {
         handleEnemyState("running", "Running", "fled", "permanent");
         try {
-          await updateCurrentUser(30);
+          updateUser({ nexoins: user.nexoins + 30 });
           toast.info("You obtained 30 nexoins!");
         } catch (error) {
           toast.error("Please login to earn nexoins!");
@@ -398,18 +397,23 @@ function PageContent() {
       setGamifiedData((prev) => ({
         ...prev,
         isCompleted: newUserHealth <= 0,
-        userHealthAfterPotion: Math.min(newUserHealth + 30, prev.maxUserHealth),
+        userHealthAfterHealthPotion: Math.min(
+          newUserHealth + 30,
+          prev.maxUserHealth
+        ),
         currentUserHealth: newUserHealth,
       }));
 
       if (newUserHealth <= 0) {
         handleEnemyState("attacking", "Attacking", "victory", "permanent");
-        try {
-          await updateCurrentUser(-10);
-          toast.info("You loose 10 nexoins!");
-        } catch (error) {
-          toast.error("Please login to earn nexoins!");
+        if (user.nexoins < 30) {
+          updateUser({ nexoins: 0 });
+          toast.error("You don't have enough nexoins");
+        } else {
+          updateUser({ nexoins: Math.max(user.nexoins - 30, 0) });
+          toast.info("You loose 30 nexoins!");
         }
+
         toast.error("Game Over! The monster has defeated you!");
       } else {
         handleEnemyState("attacking", "Attacking");
@@ -453,10 +457,10 @@ function PageContent() {
               ></Button> */}
               <div className="flex flex-row items-center justify-center gap-2">
                 <span className="flex flex-row items-center justify-center gap-1">
-                  <GiHealthPotion /> {gamifiedData?.healthPotions ?? 1}
+                  <GiHealthPotion /> {user.ownedItems.health}
                 </span>
                 <span className="flex flex-row items-center justify-center gap-1">
-                  <GiMagicPotion /> {gamifiedData?.hintPotions ?? 3}
+                  <GiMagicPotion /> {user.ownedItems.hint}
                 </span>
               </div>
             </div>
@@ -569,8 +573,9 @@ function PageContent() {
                           className="h-full bg-primary/5 transition-all duration-1000 absolute top-0 left-0"
                           style={{
                             width:
-                              gamifiedData?.userHealthAfterPotion.toFixed(2) +
-                              "%",
+                              gamifiedData?.userHealthAfterHealthPotion.toFixed(
+                                2
+                              ) + "%",
                           }}
                         ></div>
                         <span
