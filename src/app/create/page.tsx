@@ -60,9 +60,11 @@ import createFlashcards from "@/lib/generateFlashcards";
 import createFlashcard from "@/lib/generateFlashcard";
 import FileDropzone from "@/components/FileDropzone";
 import { useShortcuts } from "@/hooks/useShortcuts";
+import { useUser } from "@/context/UserContext";
 
 function Page() {
   const router = useRouter();
+  const { user, updateUser } = useUser();
   const [cardSetData, setCardSetData] = useState<Cardset>({
     idea: "",
     description: "",
@@ -129,9 +131,7 @@ function Page() {
       return;
     }
 
-    try {
-      await updateCurrentUser(-10);
-    } catch (error) {
+    if (user.nexoins < 10) {
       toast.error("You donot have enough nexoins to generate flashcards");
       setMainLoading(false);
       return;
@@ -141,6 +141,7 @@ function Page() {
       const response = await createFlashcards(images, cardSetData);
       if (response) {
         setCardSetDataList((prev) => [...prev, ...response]);
+        updateUser({ nexoins: user.nexoins - 10 });
       } else {
         toast.error("Failed to get flashcards");
       }
@@ -178,9 +179,7 @@ function Page() {
       .filter((_, i) => i !== index)
       .filter((card) => card.term && card.definition);
 
-    try {
-      await updateCurrentUser(-10);
-    } catch (error) {
+    if (user.nexoins < 10) {
       toast.error("You donot have enough nexoins to generate flashcards");
       setSecondaryLoading(0);
       return;
@@ -198,6 +197,7 @@ function Page() {
           newArray[index] = response;
           return newArray;
         });
+        updateUser({ nexoins: user.nexoins - 10 });
       } else {
         toast.error("Failed to get flashcards");
       }
