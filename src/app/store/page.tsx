@@ -1,38 +1,11 @@
-"use client";
+"use client"
 
 import ItemsListing from "@/components/ItemsListing";
 import Button from "@/components/shared/Button";
-import { itemsList, mockUser } from "@/config";
-import { getCredentials } from "@/helper/idb";
-import { User } from "@/types/users";
-import React, { useEffect, useState } from "react";
+import { itemsList } from "@/config";
+import React from "react";
 
 function Page() {
-  const [user, setUser] = useState<User>(mockUser);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const user = await getCredentials();
-        if (user) {
-          setUser({
-            username: user.username,
-            currentSignalGauge: user.currentSignalGauge || 5,
-            requiredSignalGauge: user.requiredSignalGauge,
-            currentSignalLevel: user.currentSignalLevel,
-            lastSignalAt: user.lastSignalAt,
-            nexoins: user.nexoins,
-            ownedItems: user.ownedItems,
-          });
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
   return (
     <>
       <main className="flex flex-row items-center justify-center w-full px-4">
@@ -50,7 +23,6 @@ function Page() {
                 {itemsList?.map((items, index) => (
                   <ItemsListing
                     key={`item-${index}`}
-                    user={user}
                     items={items}
                     index={index}
                   />

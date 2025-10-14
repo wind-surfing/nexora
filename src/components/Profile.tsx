@@ -1,28 +1,18 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { RiCopperCoinFill } from "react-icons/ri";
-import { getCredentials } from "@/helper/idb";
-import { usePathname } from "next/navigation";
+import { useUser } from "@/context/UserContext";
+import { mockUser } from "@/config";
 
 function Profile() {
-  const pathname = usePathname();
-  const [nexoins, setNexoins] = useState<number>(0);
+  const { user = mockUser } = useUser();
 
-  useEffect(() => {
-    const getCoins = async () => {
-      const credentials = await getCredentials();
-      if (credentials) {
-        setNexoins(credentials.nexoins);
-      }
-    };
-    getCoins();
-  }, [pathname]);
   return (
     <nav className="flex flex-row items-center gap-4">
       <div className="flex flex-row items-center justify-center gap-1">
-        {nexoins || 0} <RiCopperCoinFill />
+        {user.nexoins || 0} <RiCopperCoinFill />
       </div>
 
       <span className="h-6 bg-muted w-0.5" />

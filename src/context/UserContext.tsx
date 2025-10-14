@@ -1,10 +1,12 @@
+"use client";
+
 import { mockUser } from "@/config";
-import { getCredentials } from "@/helper/idb";
+import { getCredentials, updateCurrentUser } from "@/helper/idb";
 import { User } from "@/types/users";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface UserContextType {
-  user: User | null;
+  user: User;
   loading: boolean;
   updateUser: (updates: Partial<User>) => void;
   setUser: React.Dispatch<React.SetStateAction<User>>;
@@ -47,8 +49,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     refreshUser();
   }, []);
 
-  const updateUser = (updates: Partial<User>) => {
+  const updateUser = async (updates: Partial<User>) => {
     setUser((prev) => (prev ? { ...prev, ...updates } : prev));
+    await updateCurrentUser({ ...updates });
   };
 
   return (

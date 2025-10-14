@@ -6,24 +6,24 @@ import { cn } from "@/lib/utils";
 import ImageSlider from "./ImageSlider";
 import { Badge } from "./ui/badge";
 import { RiCopperCoinFill } from "react-icons/ri";
-import { Items, User } from "@/types/users";
+import { Items } from "@/types/users";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import Button from "./shared/Button";
 import { updateCurrentUser } from "@/helper/idb";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useUser } from "@/context/UserContext";
+import { mockUser } from "@/config";
 
 interface ItemsListingProps {
-  user: User;
   items: Items;
   index: number;
 }
 
-const ItemsListing = ({ user, items, index }: ItemsListingProps) => {
+const ItemsListing = ({ items, index }: ItemsListingProps) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [count, setCount] = useState(1);
   const [signalGauge, setSignalGauge] = useState(0);
-  const router = useRouter();
+  const { user = mockUser, updateUser } = useUser();
 
   useEffect(() => {
     const percentage =
@@ -46,15 +46,17 @@ const ItemsListing = ({ user, items, index }: ItemsListingProps) => {
     }
 
     try {
-      await updateCurrentUser({
+      const updates = {
         nexoins: user.nexoins - items.price * count,
         ownedItems: {
           ...(user.ownedItems ?? {}),
           [items.specialId]: (user.ownedItems?.[items.specialId] ?? 0) + count,
         },
-      });
+      };
+      // await updateCurrentUser(updates);
+      updateUser(updates);
+
       toast.success("Purchase successful");
-      router.push("/home");
     } catch (error) {
       console.error(error);
     }
