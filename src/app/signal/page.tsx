@@ -37,6 +37,18 @@ function Page() {
           <div className="absolute inset-0 flex justify-center">
             <div className="w-[2px] bg-gradient-to-t from-blue-200 via-blue-500 to-transparent blur-[1px]"></div>
           </div>
+
+          <motion.div
+            className="absolute bottom-0 left-0 w-full flex flex-col items-center justify-start z-10"
+            initial={{ height: 0 }}
+            animate={{ height: `calc(50% - 10%)` }}
+            transition={{ type: "spring", stiffness: 80, delay: 0.5 }}
+          >
+            <h1 className="text-5xl font-black text-white z-10 tracking-wider">
+              50
+            </h1>
+            <h1 className="text-xl text-white tracking-wider">/100</h1>
+          </motion.div>
         </div>
       </div>
       <div className="mt-6 text-3xl font-bold text-primary drop-shadow-[0_0_10px_#FFD700] tracking-wider">
