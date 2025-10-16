@@ -22,7 +22,10 @@ function Page() {
   const [magicallyPickedIndex, setMagicallyPickedIndex] = useState<
     number | null
   >(null);
-  const [rawSignal, setRawSignal] = useState<string>("");
+  const [targetNumber, setTargetNumber] = useState<number>(0);
+  const [miniGameGuess, setMiniGameGuess] = useState<number>(0);
+  const [tries, setTries] = useState<number>(0);
+  const [rawSignalGuess, setRawSignalGuess] = useState<string>("");
 
   useEffect(() => {
     const fetchFlashcards = async () => {
@@ -31,7 +34,35 @@ function Page() {
     };
 
     fetchFlashcards();
+    setTargetNumber(Math.floor(Math.random() * 20) + 1);
   }, []);
+
+  const handleMiniGameGuess = () => {
+    if (miniGameGuess < 1 || miniGameGuess > 20) {
+      toast.error("Please enter a number between 1 and 20.");
+      return;
+    }
+    if (tries >= 3) {
+      toast.error(
+        `Sorry, you've used all your tries. The correct number was ${targetNumber}.`
+      );
+      return;
+    }
+
+    if (miniGameGuess === targetNumber) {
+      toast.success("Congratulations! You guessed the correct number!");
+
+      updateUser({ nexoins: user.nexoins + 50 });
+      setTargetNumber(Math.floor(Math.random() * 20) + 1);
+      setMiniGameGuess(0);
+    } else if (miniGameGuess < targetNumber) {
+      toast.error("Try a higher number.");
+      setTries((prevTries) => prevTries + 1);
+    } else {
+      toast.error("Try a lower number.");
+      setTries((prevTries) => prevTries + 1);
+    }
+  };
 
   const handleMagicPick = () => {
     if (flashCards.length === 0) return;
@@ -39,21 +70,22 @@ function Page() {
     setMagicallyPickedIndex(randomIndex);
   };
 
-  const handleMagicSignal = () => {
-    if (!rawSignal) {
+  const handleMagicSignalGuess = () => {
+    if (!rawSignalGuess) {
       toast.error("Please enter a signal.");
       return;
     }
 
     if (
-      rawSignal.trim().toLowerCase() === generateMagicSignal().toLowerCase()
+      rawSignalGuess.trim().toLowerCase() ===
+      generateMagicSignal().toLowerCase()
     ) {
       toast.success("Magic signal is correct! You earned 100 nexoins.");
       updateUser({ nexoins: user.nexoins + 100 });
-      setRawSignal("");
+      setRawSignalGuess("");
     } else {
       toast.error("Magic signal is incorrect. Try again!");
-      setRawSignal("");
+      setRawSignalGuess("");
     }
   };
 
@@ -64,6 +96,49 @@ function Page() {
           <header className="flex flex-row items-center justify-between sticky top-16 z-20 bg-background h-16 w-full border-b">
             <h2 className="text-3xl">Let&apos;s Do Flashcards</h2>
             <div className="flex flex-row items-center justify-center gap-4">
+              <Popover>
+                <PopoverTrigger>
+                  <Button
+                    leftIcon={<GiMagicBroom />}
+                    type="button"
+                    title="Mini Game"
+                  ></Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80">
+                  <div className="grid gap-4">
+                    <div className="space-y-2">
+                      <h4 className="leading-none font-medium">
+                        Play a mini game
+                      </h4>
+                      <p className="text-muted-foreground text-sm">
+                        Guess a number between 1 and 20 in 3 tries.
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="guess">Guess</Label>
+                      <Input
+                        id="guess"
+                        type="text"
+                        className="col-span-2 h-8"
+                        value={miniGameGuess}
+                        onChange={({ target: { value } }) =>
+                          setMiniGameGuess(!isNaN(+value) ? +value : 0)
+                        }
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <div className="grid grid-cols-2 items-center gap-4">
+                        <Button
+                          onClick={() => handleMiniGameGuess()}
+                          disabled={tries >= 3}
+                          type="button"
+                          title="Guess"
+                        ></Button>
+                      </div>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
               <Popover>
                 <PopoverTrigger>
                   <Button
@@ -88,16 +163,16 @@ function Page() {
                         id="signal"
                         type="text"
                         className="col-span-2 h-8"
-                        value={rawSignal}
+                        value={rawSignalGuess}
                         onChange={({ target: { value } }) =>
-                          setRawSignal(value)
+                          setRawSignalGuess(value)
                         }
                       />
                     </div>
                     <div className="grid gap-2">
                       <div className="grid grid-cols-2 items-center gap-4">
                         <Button
-                          onClick={() => handleMagicSignal()}
+                          onClick={() => handleMagicSignalGuess()}
                           type="button"
                           title="Test signal"
                         ></Button>
