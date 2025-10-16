@@ -401,8 +401,13 @@ function PageContent() {
       ) {
         handleEnemyState("running", "Running", "fled", "permanent");
         try {
-          updateUser({ nexoins: user.nexoins + 60 });
-          toast.info("You obtained 60 nexoins!");
+          updateUser({
+            nexoins: user.nexoins + 60,
+            currentSignalGauge:
+              user.currentSignalGauge +
+              1.5 * Math.log2(user.currentSignalLevel + 2),
+          });
+          toast.info("You obtained 60 nexoins! & some signal gauge!");
         } catch (error) {
           toast.error("Please login to earn nexoins!");
         }
@@ -437,11 +442,21 @@ function PageContent() {
       if (newUserHealth <= 0) {
         handleEnemyState("attacking", "Attacking", "victory", "permanent");
         if (user.nexoins < 50) {
-          updateUser({ nexoins: 0 });
-          toast.error("You don't have enough nexoins");
+          updateUser({
+            nexoins: 0,
+            currentSignalGauge: 0,
+            currentSignalLevel: Math.max(user.currentSignalLevel - 1, 1),
+          });
+          toast.error(
+            "You don't have enough nexoins so your signal level is decreased by 1"
+          );
         } else {
-          updateUser({ nexoins: Math.max(user.nexoins - 50, 0) });
-          toast.info("You loose 50 nexoins!");
+          updateUser({
+            nexoins: Math.max(user.nexoins - 50, 0),
+            currentSignalGauge:
+              user.currentSignalGauge - 2 * Math.sqrt(user.currentSignalLevel),
+          });
+          toast.info("You loose 50 nexoins! & some signal gauge!");
         }
 
         toast.error("Game Over! The monster has defeated you!");

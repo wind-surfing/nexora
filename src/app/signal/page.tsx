@@ -12,6 +12,8 @@ function Page() {
     updateUser,
   } = useUser();
 
+  console.log(currentSignalGauge, requiredSignalGauge);
+
   return (
     <div className="flex flex-col items-center justify-center h-[calc(100vh-64px)] w-full relative overflow-hidden">
       <div className="relative flex flex-col items-center justify-end w-40 h-[400px] rounded-b-3xl border-2 border-primary bg-gradient-to-t from-[#001233] via-[#003366] to-[#0055ff] overflow-hidden">
@@ -66,9 +68,11 @@ function Page() {
             transition={{ type: "spring", stiffness: 80, delay: 0.5 }}
           >
             <h1 className="text-5xl font-black tracking-wider">
-              {currentSignalGauge}
+              {currentSignalGauge.toFixed(0)}
             </h1>
-            <h1 className="text-xl tracking-wider">/{requiredSignalGauge}</h1>
+            <h1 className="text-xl tracking-wider">
+              /{requiredSignalGauge.toFixed(0)}
+            </h1>
           </motion.div>
 
           {currentSignalGauge >= requiredSignalGauge && (
@@ -85,8 +89,9 @@ function Page() {
                   updateUser({
                     currentSignalLevel: currentSignalLevel + 1,
                     currentSignalGauge: 0,
-                    requiredSignalGauge:
-                      requiredSignalGauge + Math.pow(2, currentSignalLevel + 1),
+                    requiredSignalGauge: Math.floor(
+                      10 * Math.pow(currentSignalLevel, 1.5)
+                    ),
                   });
                 }}
                 containerClass="bg-transparent text-white"

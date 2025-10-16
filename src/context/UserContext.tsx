@@ -28,12 +28,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       if (user) {
         setUser({
           username: user.username,
-          currentSignalGauge: user.currentSignalGauge || 5,
-          requiredSignalGauge: user.requiredSignalGauge,
-          currentSignalLevel: user.currentSignalLevel,
-          lastSignalAt: user.lastSignalAt,
-          nexoins: user.nexoins,
-          ownedItems: user.ownedItems,
+          currentSignalGauge: user.currentSignalGauge ?? 0,
+          requiredSignalGauge: user.requiredSignalGauge ?? 0,
+          currentSignalLevel: user.currentSignalLevel ?? 0,
+          lastSignalAt: user.lastSignalAt ?? new Date(),
+          nexoins: user.nexoins ?? 0,
+          ownedItems: user.ownedItems ?? {},
         });
       } else {
         setUser(mockUser);

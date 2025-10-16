@@ -36,7 +36,7 @@ function Page() {
         password: credentialInfo?.password,
         nexoins: credentialInfo?.coins || 0,
         currentSignalGauge: 0,
-        requiredSignalGauge: 100,
+        requiredSignalGauge: 5,
         currentSignalLevel: 1,
         lastSignalAt: new Date(),
         ownedItems: {
