@@ -2,17 +2,32 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { useUser } from "@/context/UserContext";
+import { cn } from "@/lib/utils";
+import Button from "@/components/shared/Button";
 
 function Page() {
+  const {
+    user: { currentSignalLevel, currentSignalGauge, requiredSignalGauge },
+    updateUser,
+  } = useUser();
+
   return (
     <div className="flex flex-col items-center justify-center h-[calc(100vh-64px)] w-full relative overflow-hidden">
       <div className="relative flex flex-col items-center justify-end w-40 h-[400px] rounded-b-3xl border-2 border-primary bg-gradient-to-t from-[#001233] via-[#003366] to-[#0055ff] overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-[#001a33] via-transparent to-transparent opacity-60">
           <motion.div
             initial={{ height: 0 }}
-            animate={{ height: `50%` }}
+            animate={{
+              height: `${(currentSignalGauge / requiredSignalGauge) * 100}%`,
+            }}
             transition={{ type: "spring", stiffness: 80 }}
-            className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#0099ff] via-[#00ccff] to-[#66ffff] rounded-t-full"
+            className={cn(
+              "absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#0099ff] via-[#00ccff] to-[#66ffff]",
+              currentSignalGauge >= requiredSignalGauge
+                ? "rounded-none animate-pulse"
+                : "rounded-t-full"
+            )}
           ></motion.div>
           <div className="absolute bottom-0 left-0 w-full h-full flex flex-col justify-end">
             {Array.from({ length: 20 }).map((_, index) => (
@@ -28,7 +43,9 @@ function Page() {
                 className="absolute bottom-0 left-1/2 w-[2px] h-[40px] bg-primary rounded-full blur-sm"
                 style={{
                   left: `${20 + index * 10}%`,
-                  height: `calc(50% - 10%)`,
+                  height: `calc(${
+                    (currentSignalGauge / requiredSignalGauge) * 100
+                  }% - 10%)`,
                 }}
               ></motion.div>
             ))}
@@ -39,20 +56,48 @@ function Page() {
           </div>
 
           <motion.div
-            className="absolute bottom-0 left-0 w-full flex flex-col items-center justify-start z-10"
+            className="absolute bottom-0 left-0 w-full flex flex-col items-center justify-start z-10 text-white"
             initial={{ height: 0 }}
-            animate={{ height: `calc(50% - 10%)` }}
+            animate={{
+              height: `calc(${
+                (currentSignalGauge / requiredSignalGauge) * 100
+              }% - 10%)`,
+            }}
             transition={{ type: "spring", stiffness: 80, delay: 0.5 }}
           >
-            <h1 className="text-5xl font-black text-white z-10 tracking-wider">
-              50
+            <h1 className="text-5xl font-black tracking-wider">
+              {currentSignalGauge}
             </h1>
-            <h1 className="text-xl text-white tracking-wider">/100</h1>
+            <h1 className="text-xl tracking-wider">/{requiredSignalGauge}</h1>
           </motion.div>
+
+          {currentSignalGauge >= requiredSignalGauge && (
+            <motion.div
+              className="absolute bottom-0 left-0 w-full flex flex-col items-center justify-center z-10 text-white"
+              initial={{ height: 0 }}
+              animate={{
+                height: `100%`,
+              }}
+              transition={{ type: "spring", stiffness: 80, delay: 0.5 }}
+            >
+              <Button
+                onClick={() => {
+                  updateUser({
+                    currentSignalLevel: currentSignalLevel + 1,
+                    currentSignalGauge: 0,
+                    requiredSignalGauge:
+                      requiredSignalGauge + Math.pow(2, currentSignalLevel + 1),
+                  });
+                }}
+                containerClass="bg-transparent text-white"
+                title="Level Up"
+              ></Button>
+            </motion.div>
+          )}
         </div>
       </div>
       <div className="mt-6 text-3xl font-bold text-primary drop-shadow-[0_0_10px_#FFD700] tracking-wider">
-        LEVEL 1
+        LEVEL {currentSignalLevel}
       </div>
     </div>
   );
