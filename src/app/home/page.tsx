@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/popover";
 import { useUser } from "@/context/UserContext";
 import { CompoundCard, getCompoundCards } from "@/helper/idb";
-import { generateMagicString } from "@/helper/magicGuess";
+import { generateMagicSignal } from "@/helper/magicSignal";
 import React, { useEffect, useState } from "react";
 import { GiCardRandom, GiMagicBroom } from "react-icons/gi";
 import { toast } from "sonner";
@@ -22,7 +22,7 @@ function Page() {
   const [magicallyPickedIndex, setMagicallyPickedIndex] = useState<
     number | null
   >(null);
-  const [rawGuess, setRawGuess] = useState<string>("");
+  const [rawSignal, setRawSignal] = useState<string>("");
 
   useEffect(() => {
     const fetchFlashcards = async () => {
@@ -39,19 +39,21 @@ function Page() {
     setMagicallyPickedIndex(randomIndex);
   };
 
-  const handleMagicGuess = () => {
-    if (!rawGuess) {
-      toast.error("Please enter a guess.");
+  const handleMagicSignal = () => {
+    if (!rawSignal) {
+      toast.error("Please enter a signal.");
       return;
     }
 
-    if (rawGuess.trim().toLowerCase() === generateMagicString().toLowerCase()) {
-      toast.success("Magic guess is correct! You earned 100 nexoins.");
+    if (
+      rawSignal.trim().toLowerCase() === generateMagicSignal().toLowerCase()
+    ) {
+      toast.success("Magic signal is correct! You earned 100 nexoins.");
       updateUser({ nexoins: user.nexoins + 100 });
-      setRawGuess("");
+      setRawSignal("");
     } else {
-      toast.error("Magic guess is incorrect. Try again!");
-      setRawGuess("");
+      toast.error("Magic signal is incorrect. Try again!");
+      setRawSignal("");
     }
   };
 
@@ -67,35 +69,37 @@ function Page() {
                   <Button
                     leftIcon={<GiMagicBroom />}
                     type="button"
-                    title="Magic Guess"
+                    title="Magic Signal"
                   ></Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-80">
                   <div className="grid gap-4">
                     <div className="space-y-2">
                       <h4 className="leading-none font-medium">
-                        Your Prediction
+                        Predict to earn
                       </h4>
                       <p className="text-muted-foreground text-sm">
-                        Are you confident about this?
+                        We sent a 3 character long magic signal to you.
                       </p>
                     </div>
                     <div className="grid grid-cols-3 items-center gap-4">
-                      <Label htmlFor="guess">Guess</Label>
+                      <Label htmlFor="signal">Signal</Label>
                       <Input
-                        id="guess"
+                        id="signal"
                         type="text"
                         className="col-span-2 h-8"
-                        value={rawGuess}
-                        onChange={({ target: { value } }) => setRawGuess(value)}
+                        value={rawSignal}
+                        onChange={({ target: { value } }) =>
+                          setRawSignal(value)
+                        }
                       />
                     </div>
                     <div className="grid gap-2">
-                      <div className="grid grid-cols-3 items-center gap-4">
+                      <div className="grid grid-cols-2 items-center gap-4">
                         <Button
-                          onClick={() => handleMagicGuess()}
+                          onClick={() => handleMagicSignal()}
                           type="button"
-                          title="Confirm"
+                          title="Test signal"
                         ></Button>
                       </div>
                     </div>

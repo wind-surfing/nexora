@@ -13,7 +13,7 @@ function Page() {
           <header className="w-full h-16 z-20 flex flex-row items-center justify-between bg-background sticky top-16 border-b">
             <h2 className="text-3xl">Nexora Store</h2>
             <div className="flex flex-row items-center justify-center gap-4">
-              <Button title="Want a gift?"></Button>
+              <Button title="Want a easter egg?"></Button>
             </div>
           </header>
 
