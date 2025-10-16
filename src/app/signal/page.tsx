@@ -57,23 +57,39 @@ function Page() {
             <div className="w-[2px] bg-gradient-to-t from-blue-200 via-blue-500 to-transparent blur-[1px]"></div>
           </div>
 
-          <motion.div
-            className="absolute bottom-0 left-0 w-full flex flex-col items-center justify-start z-10 text-white"
-            initial={{ height: 0 }}
-            animate={{
-              height: `calc(${
-                (currentSignalGauge / requiredSignalGauge) * 100
-              }% - 10%)`,
-            }}
-            transition={{ type: "spring", stiffness: 80, delay: 0.5 }}
-          >
-            <h1 className="text-5xl font-black tracking-wider">
-              {currentSignalGauge.toFixed(0)}
-            </h1>
-            <h1 className="text-xl tracking-wider">
-              /{requiredSignalGauge.toFixed(0)}
-            </h1>
-          </motion.div>
+          {currentSignalGauge / requiredSignalGauge >= 0.3 ? (
+            <motion.div
+              className="absolute bottom-0 left-0 w-full flex flex-col items-center justify-start z-10 text-white"
+              initial={{ height: 0 }}
+              animate={{
+                height: `calc(${
+                  (currentSignalGauge / requiredSignalGauge) * 100
+                }% - 10%)`,
+              }}
+              transition={{ type: "spring", stiffness: 80, delay: 0.5 }}
+            >
+              <h1 className="text-5xl font-black tracking-wider">
+                {currentSignalGauge.toFixed(0)}
+              </h1>
+              <h1 className="text-xl tracking-wider">
+                /{requiredSignalGauge.toFixed(0)}
+              </h1>
+            </motion.div>
+          ) : (
+            <motion.div
+              className="absolute bottom-0 left-0 w-full flex flex-col items-center justify-center z-10 text-white"
+              initial={{ height: 0 }}
+              animate={{ height: `100%` }}
+              transition={{ type: "spring", stiffness: 80, delay: 0.5 }}
+            >
+              <h1 className="text-5xl font-black tracking-wider">
+                {currentSignalGauge.toFixed(0)}
+              </h1>
+              <h1 className="text-xl tracking-wider">
+                /{requiredSignalGauge.toFixed(0)}
+              </h1>
+            </motion.div>
+          )}
 
           {currentSignalGauge >= requiredSignalGauge && (
             <motion.div
@@ -89,9 +105,9 @@ function Page() {
                   updateUser({
                     currentSignalLevel: currentSignalLevel + 1,
                     currentSignalGauge: 0,
-                    requiredSignalGauge: Math.floor(
+                    requiredSignalGauge: +Math.floor(
                       10 * Math.pow(currentSignalLevel, 1.5)
-                    ),
+                    ).toFixed(2),
                   });
                 }}
                 containerClass="bg-transparent text-white"

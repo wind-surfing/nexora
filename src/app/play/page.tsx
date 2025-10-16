@@ -403,9 +403,10 @@ function PageContent() {
         try {
           updateUser({
             nexoins: user.nexoins + 60,
-            currentSignalGauge:
+            currentSignalGauge: +(
               user.currentSignalGauge +
-              1.5 * Math.log2(user.currentSignalLevel + 2),
+              1.5 * Math.log2(user.currentSignalLevel + 2)
+            ).toFixed(2),
           });
           toast.info("You obtained 60 nexoins! & some signal gauge!");
         } catch (error) {
@@ -453,8 +454,10 @@ function PageContent() {
         } else {
           updateUser({
             nexoins: Math.max(user.nexoins - 50, 0),
-            currentSignalGauge:
-              user.currentSignalGauge - 2 * Math.sqrt(user.currentSignalLevel),
+            currentSignalGauge: +(
+              user.currentSignalGauge -
+              2 * Math.sqrt(user.currentSignalLevel)
+            ).toFixed(2),
           });
           toast.info("You loose 50 nexoins! & some signal gauge!");
         }
