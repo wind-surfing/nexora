@@ -14,7 +14,6 @@ function Page() {
             transition={{ type: "spring", stiffness: 80 }}
             className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#0099ff] via-[#00ccff] to-[#66ffff] rounded-t-full"
           ></motion.div>
-
           <div className="absolute bottom-0 left-0 w-full h-full flex flex-col justify-end">
             {Array.from({ length: 20 }).map((_, index) => (
               <motion.div
@@ -34,7 +33,14 @@ function Page() {
               ></motion.div>
             ))}
           </div>
+
+          <div className="absolute inset-0 flex justify-center">
+            <div className="w-[2px] bg-gradient-to-t from-blue-200 via-blue-500 to-transparent blur-[1px]"></div>
+          </div>
         </div>
+      </div>
+      <div className="mt-6 text-3xl font-bold text-primary drop-shadow-[0_0_10px_#FFD700] tracking-wider">
+        LEVEL 1
       </div>
     </div>
   );
