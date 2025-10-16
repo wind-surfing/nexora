@@ -5,18 +5,18 @@ export const credentials = [
   {
     username: "user",
     password: "password",
-    coins: 30,
+    coins: 600,
   },
   {
     username: "test123",
     password: "test123",
-    coins: 30,
+    coins: 600,
   },
   {
     username: process.env.NEXT_PUBLIC_ADMIN_USERNAME!,
     password: process.env.NEXT_PUBLIC_ADMIN_PASSWORD!,
     secure: true,
-    coins: 1000,
+    coins: 100000,
   },
 ];
 
@@ -69,24 +69,24 @@ export const mockUser: User = {
 
 export const itemsList: Items[] = [
   {
-    specialId: "health",
-    srcs: ["/health-potion.jpg"],
-    title: "Health Potion",
-    description: "Health potion comes in handy to make yourself feel better",
-    price: 100,
-    badge: "",
-    theme: "#00ff00",
-    requiredSignalGauge: 5,
-  },
-  {
     specialId: "hint",
     srcs: ["/hint-potion.jpg"],
     title: "Hint Potion",
     description: "Everyone deserves a hint",
-    price: 100,
+    price: 40,
     badge: "",
     theme: "#ffff00",
-    requiredSignalGauge: 5,
+    requiredSignalLevel: 1,
+  },
+  {
+    specialId: "health",
+    srcs: ["/health-potion.jpg"],
+    title: "Health Potion",
+    description: "Health is wealth",
+    price: 120,
+    badge: "",
+    theme: "#00ff00",
+    requiredSignalLevel: 3,
   },
 ];
 

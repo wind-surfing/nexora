@@ -131,7 +131,7 @@ function Page() {
       return;
     }
 
-    if (user.nexoins < 10) {
+    if (user.nexoins < 120) {
       toast.error("You donot have enough nexoins to generate flashcards");
       setMainLoading(false);
       return;
@@ -141,7 +141,7 @@ function Page() {
       const response = await createFlashcards(images, cardSetData);
       if (response) {
         setCardSetDataList((prev) => [...prev, ...response]);
-        updateUser({ nexoins: user.nexoins - 10 });
+        updateUser({ nexoins: user.nexoins - 120 });
       } else {
         toast.error("Failed to get flashcards");
       }
@@ -179,7 +179,7 @@ function Page() {
       .filter((_, i) => i !== index)
       .filter((card) => card.term && card.definition);
 
-    if (user.nexoins < 10) {
+    if (user.nexoins < 120) {
       toast.error("You donot have enough nexoins to generate flashcards");
       setSecondaryLoading(0);
       return;
@@ -197,7 +197,7 @@ function Page() {
           newArray[index] = response;
           return newArray;
         });
-        updateUser({ nexoins: user.nexoins - 10 });
+        updateUser({ nexoins: user.nexoins - 120 });
       } else {
         toast.error("Failed to get flashcards");
       }
@@ -406,7 +406,7 @@ function Page() {
                   <div className="space-y-2">
                     <h4 className="leading-none font-medium">Confirm</h4>
                     <p className="text-muted-foreground text-sm">
-                      Are you sure you want to spend 10 nexoins to generate
+                      Are you sure you want to spend 120 nexoins to generate
                     </p>
                   </div>
                   <div className="grid gap-2">
@@ -646,7 +646,7 @@ function Page() {
                                 Confirm
                               </h4>
                               <p className="text-muted-foreground text-sm">
-                                Are you sure you want to spend 10 nexoins to
+                                Are you sure you want to spend 120 nexoins to
                                 generate
                               </p>
                             </div>

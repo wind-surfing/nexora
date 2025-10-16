@@ -6,7 +6,7 @@ export interface Items {
   price: number;
   badge: string;
   theme: string;
-  requiredSignalGauge: number;
+  requiredSignalLevel: number;
 }
 
 export interface User {

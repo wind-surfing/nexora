@@ -3,14 +3,7 @@
 import "@/styles/fled-styles.css";
 import Button from "@/components/shared/Button";
 import { Button as Button2 } from "@/components/ui/button";
-import React, {
-  Suspense,
-  use,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import {
   FaArrowLeft,
   FaArrowRight,
@@ -408,8 +401,8 @@ function PageContent() {
       ) {
         handleEnemyState("running", "Running", "fled", "permanent");
         try {
-          updateUser({ nexoins: user.nexoins + 30 });
-          toast.info("You obtained 30 nexoins!");
+          updateUser({ nexoins: user.nexoins + 60 });
+          toast.info("You obtained 60 nexoins!");
         } catch (error) {
           toast.error("Please login to earn nexoins!");
         }
@@ -443,12 +436,12 @@ function PageContent() {
 
       if (newUserHealth <= 0) {
         handleEnemyState("attacking", "Attacking", "victory", "permanent");
-        if (user.nexoins < 30) {
+        if (user.nexoins < 50) {
           updateUser({ nexoins: 0 });
           toast.error("You don't have enough nexoins");
         } else {
-          updateUser({ nexoins: Math.max(user.nexoins - 30, 0) });
-          toast.info("You loose 30 nexoins!");
+          updateUser({ nexoins: Math.max(user.nexoins - 50, 0) });
+          toast.info("You loose 50 nexoins!");
         }
 
         toast.error("Game Over! The monster has defeated you!");

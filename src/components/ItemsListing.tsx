@@ -26,7 +26,7 @@ const ItemsListing = ({ items, index }: ItemsListingProps) => {
 
   useEffect(() => {
     const percentage =
-      (user.currentSignalGauge / items.requiredSignalGauge) * 100;
+      (user.currentSignalLevel / items.requiredSignalLevel) * 100;
     setSignalGauge(percentage);
   }, [items, user]);
 
@@ -130,7 +130,7 @@ const ItemsListing = ({ items, index }: ItemsListingProps) => {
                 </>
               ) : (
                 <>
-                  <div className="h-6 w-full rounded overflow-hidden border-2 border-gray-700 shadow-inner relative">
+                  <div title="Signal Level" className="h-6 w-full rounded overflow-hidden border-2 border-gray-700 shadow-inner relative">
                     <div
                       className="h-full bg-primary/60 transition-all duration-1000 absolute top-0 left-0"
                       style={{
