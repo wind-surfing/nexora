@@ -3,7 +3,14 @@
 import "@/styles/fled-styles.css";
 import Button from "@/components/shared/Button";
 import { Button as Button2 } from "@/components/ui/button";
-import React, { Suspense, useEffect, useMemo, useState } from "react";
+import React, {
+  Suspense,
+  use,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   FaArrowLeft,
   FaArrowRight,
@@ -29,6 +36,7 @@ import { CompoundCard, getCompoundCards, getImageByPath } from "@/helper/idb";
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
 import { useUser } from "@/context/UserContext";
+import SignalWave from "@/components/SignalWave";
 
 interface GamifiedData {
   isCompleted: boolean;
@@ -92,7 +100,12 @@ function PageContent() {
     className: "",
     type: "temporary",
   });
+  const [speechSignal, setSpeechSignal] = useState<"speaking" | "idle">("idle");
   const timeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
+
+  useEffect(() => {
+    stopSpeechSignal();
+  }, [gamifiedData.currentCard]);
 
   const handleEnemyState = (
     src: string,
@@ -251,22 +264,28 @@ function PageContent() {
     }
   };
 
-  const handleSignalGraph = () => {};
-
   const getSpeechSignal = (text: string) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       toast.error("Speech Synthesis not supported in this browser.");
       return;
     }
 
+    stopSpeechSignal();
+
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.onstart = () => handleSignalGraph();
-    utterance.onend = () => {};
     utterance.volume = 1;
     utterance.lang = "en-US";
     utterance.rate = 1;
     utterance.pitch = 1;
+    utterance.onstart = () => setSpeechSignal("speaking");
+    utterance.onend = () => setSpeechSignal("idle");
+
     window.speechSynthesis.speak(utterance);
+  };
+
+  const stopSpeechSignal = () => {
+    window.speechSynthesis.cancel();
+    setSpeechSignal("idle");
   };
 
   const handleHealth = () => {
@@ -497,7 +516,10 @@ function PageContent() {
                         <Popover>
                           <PopoverTrigger>
                             <Tooltip>
-                              <TooltipTrigger type="button">
+                              <TooltipTrigger
+                                type="button"
+                                className="cursor-pointer"
+                              >
                                 <FaWandMagicSparkles className="text-xl" />
                               </TooltipTrigger>
                               <TooltipContent>
@@ -541,24 +563,44 @@ function PageContent() {
                           }
                         </span>
                       </span>
-                      <span className="flex flex-row items-center gap-2">
+                      <span className="flex items-center gap-2">
                         <Tooltip>
                           <TooltipTrigger
-                            onClick={() =>
-                              getSpeechSignal(
-                                flashCardSet?.cards[
-                                  gamifiedData?.currentCard - 1
-                                ]?.definition || ""
-                              )
-                            }
+                            onClick={() => {
+                              if (speechSignal === "speaking")
+                                stopSpeechSignal();
+                              else
+                                getSpeechSignal(
+                                  flashCardSet?.cards[
+                                    gamifiedData?.currentCard - 1
+                                  ]?.definition || ""
+                                );
+                            }}
                             type="button"
+                            className={`flex items-center justify-center h-8 w-8 rounded-full transition-colors text-background cursor-pointer`}
                           >
-                            <AiFillSound className="text-xl" />
+                            {speechSignal === "speaking" ? (
+                              <FaPlus className="rotate-45 text-base" />
+                            ) : (
+                              <AiFillSound className="text-base" />
+                            )}
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>Listen to the sound</p>
+                            <p>
+                              {speechSignal === "speaking"
+                                ? "Stop sound"
+                                : "Play sound"}
+                            </p>
                           </TooltipContent>
                         </Tooltip>
+
+                        <SignalWave
+                          active={speechSignal === "speaking"}
+                          sentence={
+                            flashCardSet?.cards[gamifiedData?.currentCard - 1]
+                              ?.definition || ""
+                          }
+                        />
                       </span>
                     </header>
                     <div className="h-full w-full flex flex-row items-center justify-center">

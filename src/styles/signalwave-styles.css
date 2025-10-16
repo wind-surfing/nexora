@@ -1,0 +1,40 @@
+.signal-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1px;
+  height: 16px;
+  width: 90px;
+  overflow: hidden;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.signal-bar {
+  width: 2px;
+  border-radius: 2px;
+  background-color: #ffffff;
+  transform-origin: bottom center;
+  opacity: 0.9;
+}
+
+.signal-container.idle {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.signal-container.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@keyframes signalPulse {
+  0% {
+    height: 3px;
+  }
+  50% {
+    height: 14px;
+  }
+  100% {
+    height: 3px;
+  }
+}
