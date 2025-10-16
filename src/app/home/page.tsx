@@ -9,15 +9,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useUser } from "@/context/UserContext";
 import { CompoundCard, getCompoundCards } from "@/helper/idb";
+import { generateMagicString } from "@/helper/magicGuess";
 import React, { useEffect, useState } from "react";
 import { GiCardRandom, GiMagicBroom } from "react-icons/gi";
+import { toast } from "sonner";
 
 function Page() {
+  const { user, updateUser } = useUser();
   const [flashCards, setFlashCards] = useState<CompoundCard[]>([]);
   const [magicallyPickedIndex, setMagicallyPickedIndex] = useState<
     number | null
   >(null);
+  const [rawGuess, setRawGuess] = useState<string>("");
 
   useEffect(() => {
     const fetchFlashcards = async () => {
@@ -32,6 +37,22 @@ function Page() {
     if (flashCards.length === 0) return;
     const randomIndex = Math.floor(Math.random() * flashCards.length);
     setMagicallyPickedIndex(randomIndex);
+  };
+
+  const handleMagicGuess = () => {
+    if (!rawGuess) {
+      toast.error("Please enter a guess.");
+      return;
+    }
+
+    if (rawGuess.trim().toLowerCase() === generateMagicString().toLowerCase()) {
+      toast.success("Magic guess is correct! You earned 100 nexoins.");
+      updateUser({ nexoins: user.nexoins + 100 });
+      setRawGuess("");
+    } else {
+      toast.error("Magic guess is incorrect. Try again!");
+      setRawGuess("");
+    }
   };
 
   return (
@@ -65,11 +86,17 @@ function Page() {
                         id="guess"
                         type="text"
                         className="col-span-2 h-8"
+                        value={rawGuess}
+                        onChange={({ target: { value } }) => setRawGuess(value)}
                       />
                     </div>
                     <div className="grid gap-2">
                       <div className="grid grid-cols-3 items-center gap-4">
-                        <Button type="button" title="Confirm"></Button>
+                        <Button
+                          onClick={() => handleMagicGuess()}
+                          type="button"
+                          title="Confirm"
+                        ></Button>
                       </div>
                     </div>
                   </div>
