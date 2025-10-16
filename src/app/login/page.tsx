@@ -4,6 +4,7 @@ import Button from "@/components/shared/Button";
 import InputField from "@/components/shared/InputField";
 import { Separator } from "@/components/ui/separator";
 import { credentials } from "@/config";
+import { useUser } from "@/context/UserContext";
 import { storeCredentials } from "@/helper/idb";
 import { LockIcon, UserIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -16,6 +17,7 @@ function Page() {
     password: string;
   }>({ username: "", password: "" });
   const router = useRouter();
+  const { user } = useUser();
 
   const handleChange = (value: string, field: "username" | "password") => {
     setData((prev) => ({ ...prev, [field]: value }));
@@ -50,6 +52,10 @@ function Page() {
       toast.error("Invalid credentials!");
     }
   };
+
+  if (user.currentSignalLevel) {
+    router.push("/home");
+  }
 
   return (
     <>

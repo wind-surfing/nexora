@@ -1,9 +1,18 @@
 "use client";
 
 import Button from "@/components/shared/Button";
+import { useUser } from "@/context/UserContext";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const { user } = useUser();
+  const router = useRouter();
+
+  if (user.currentSignalLevel) {
+    router.push("/home");
+  }
+
   return (
     <>
       <main className="flex flex-row items-center justify-between w-full h-[calc(100vh-76px)] px-4">

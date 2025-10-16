@@ -27,7 +27,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (user) {
         setUser({
-          username: user.username,
+          username: user.username ?? "",
           currentSignalGauge: user.currentSignalGauge ?? 0,
           requiredSignalGauge: user.requiredSignalGauge ?? 0,
           currentSignalLevel: user.currentSignalLevel ?? 0,
