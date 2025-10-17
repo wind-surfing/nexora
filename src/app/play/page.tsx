@@ -90,6 +90,7 @@ function PageContent() {
     type: "temporary",
   });
   const [speechSignal, setSpeechSignal] = useState<"speaking" | "idle">("idle");
+  const [isFlipped, setIsFlipped] = useState<boolean>(false);
   const timeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
@@ -522,9 +523,12 @@ function PageContent() {
                 <main className="flex flex-col items-start justify-start w-5/8 h-full">
                   <section
                     className={cn(
-                      "w-full bg-primary text-white rounded-2xl mx-4 mt-4 px-4 flex flex-col items-start justify-start relative overflow-hidden ",
-                      isReviewMode ? "aspect-[16/10]" : "aspect-[16/8] "
+                      "w-full bg-primary text-white rounded-2xl mx-4 mt-4 flex flex-col items-start justify-start relative overflow-hidden ",
+                      isReviewMode ? "aspect-[16/10] " : "aspect-[16/8] "
                     )}
+                    onClick={() =>
+                      isReviewMode && setIsFlipped((prev) => !prev)
+                    }
                   >
                     <header
                       style={{ zIndex: 10 }}
@@ -624,29 +628,60 @@ function PageContent() {
                         />
                       </span>
                     </header>
-                    <div className="h-full w-full flex flex-row items-center justify-center">
-                      <span style={{ zIndex: 10 }} className="text-4xl">
-                        {
-                          flashCardSet.cards[gamifiedData?.currentCard - 1]
-                            ?.definition
-                        }
-                      </span>
-                      <Image
-                        src={
-                          flashCardSet.cards[gamifiedData?.currentCard - 1]
-                            ?.src || "/nexora.svg"
-                        }
-                        alt={
-                          flashCardSet.cards[gamifiedData?.currentCard - 1]
-                            ?.alt || "Flashcard Image"
-                        }
-                        layout="fill"
-                        objectFit="cover"
-                        style={{
-                          opacity: 0.2,
-                        }}
-                      />
-                    </div>
+
+                    <section
+                      className={cn(
+                        "w-full h-full px-4 flex flex-col items-center justify-center relative ",
+                        isFlipped ? "flip" : ""
+                      )}
+                    >
+                      <div className="front h-full w-full flex flex-row items-center justify-center">
+                        <span style={{ zIndex: 10 }} className="text-4xl">
+                          {
+                            flashCardSet.cards[gamifiedData?.currentCard - 1]
+                              ?.definition
+                          }
+                        </span>
+                        <Image
+                          src={
+                            flashCardSet.cards[gamifiedData?.currentCard - 1]
+                              ?.src || "/nexora.svg"
+                          }
+                          alt={
+                            flashCardSet.cards[gamifiedData?.currentCard - 1]
+                              ?.alt || "Flashcard Image"
+                          }
+                          layout="fill"
+                          objectFit="cover"
+                          style={{
+                            opacity: 0.2,
+                          }}
+                        />
+                      </div>
+                      <div className="back h-full w-full flex flex-row items-center justify-center">
+                        <span style={{ zIndex: 10 }} className="text-4xl">
+                          {
+                            flashCardSet.cards[gamifiedData?.currentCard - 1]
+                              ?.term
+                          }
+                        </span>
+                        <Image
+                          src={
+                            flashCardSet.cards[gamifiedData?.currentCard - 1]
+                              ?.src || "/nexora.svg"
+                          }
+                          alt={
+                            flashCardSet.cards[gamifiedData?.currentCard - 1]
+                              ?.alt || "Flashcard Image"
+                          }
+                          layout="fill"
+                          objectFit="cover"
+                          style={{
+                            opacity: 0.2,
+                          }}
+                        />
+                      </div>
+                    </section>
                   </section>
                   <section className="w-full mx-4 p-4 flex flex-row items-center justify-between rounded-xl">
                     {!isReviewMode && (

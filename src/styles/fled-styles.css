@@ -30,3 +30,21 @@
     scale: 1;
   }
 }
+
+.card {
+  transform-style: preserve-3d;
+  transform: rotateY(var(--rotate-y, 0));
+}
+
+.card.flip {
+  --rotate-y: 180deg;
+}
+
+.front, .back {
+  backface-visibility: hidden;
+}
+
+.back {
+  transform: rotateY(180deg);
+}
+
