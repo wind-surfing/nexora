@@ -502,7 +502,7 @@ function PageContent() {
               </div>
               <Button
                 type="button"
-                title={isReviewMode ? "Magic Mode" : "Do Review"}
+                title={isReviewMode ? "Let's Compete" : "Let's Review"}
                 onClick={() => {
                   setIsFlipped(false);
                   setIsReviewMode((prev) => !prev);
