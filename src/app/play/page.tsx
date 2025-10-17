@@ -196,6 +196,7 @@ function PageContent() {
           monsterMaxHealth: 100,
           currentMonsterHealth: 100,
         });
+        handleShuffle();
       };
 
       if (!flashcardId) {
@@ -222,6 +223,7 @@ function PageContent() {
             monsterMaxHealth: 100,
             currentMonsterHealth: 100,
           });
+          handleShuffle();
         } else {
           toast.error("Flashcard of that id not found so showing a random one");
           randomFlashcard();
