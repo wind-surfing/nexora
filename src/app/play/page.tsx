@@ -510,7 +510,11 @@ function PageContent() {
             <div
               className={cn(
                 "flex flex-row items-center w-full h-full gap-4 ",
-                isReviewMode ? "justify-center" : "justify-between"
+                isReviewMode
+                  ? "justify-center"
+                  : gamifiedData.isCompleted
+                  ? "justify-center"
+                  : "justify-between"
               )}
             >
               {/* Flashcard content ought to be here */}
