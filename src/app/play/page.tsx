@@ -31,6 +31,7 @@ import { useUser } from "@/context/UserContext";
 import SignalWave from "@/components/SignalWave";
 import Loader from "@/components/shared/Loader";
 import { itemsList } from "@/config";
+import { cn } from "@/lib/utils";
 
 interface GamifiedData {
   isCompleted: boolean;
@@ -485,11 +486,6 @@ function PageContent() {
               <span>Set of {flashCardSet?.idea}</span>
             </div>
             <div className="flex flex-row items-center justify-center gap-8">
-              <Button
-                type="button"
-                title={isReviewMode ? "Magic Mode" : "Do Review"}
-                onClick={() => setIsReviewMode((prev) => !prev)}
-              ></Button>
               <div className="flex flex-row items-center justify-center gap-2">
                 {!isReviewMode &&
                   itemsList.map((item, index) => {
@@ -503,14 +499,29 @@ function PageContent() {
                     );
                   })}
               </div>
+              <Button
+                type="button"
+                title={isReviewMode ? "Magic Mode" : "Do Review"}
+                onClick={() => setIsReviewMode((prev) => !prev)}
+              ></Button>
             </div>
           </header>
           <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-128px)]">
-            <div className="flex flex-row items-center justify-between w-full h-full gap-4">
+            <div
+              className={cn(
+                "flex flex-row items-center w-full h-full gap-4 ",
+                isReviewMode ? "justify-center" : "justify-between"
+              )}
+            >
               {/* Flashcard content ought to be here */}
               {flashCardSet?.cards.length && !gamifiedData?.isCompleted ? (
                 <main className="flex flex-col items-start justify-start w-5/8 h-full">
-                  <section className="aspect-[16/8] w-full bg-primary text-white rounded-2xl mx-4 mt-4 px-4 flex flex-col items-start justify-start relative overflow-hidden">
+                  <section
+                    className={cn(
+                      "w-full bg-primary text-white rounded-2xl mx-4 mt-4 px-4 flex flex-col items-start justify-start relative overflow-hidden ",
+                      isReviewMode ? "aspect-[16/10]" : "aspect-[16/8] "
+                    )}
+                  >
                     <header
                       style={{ zIndex: 10 }}
                       className="w-full flex flex-row items-center justify-between absolute top-4 left-0 px-6"
