@@ -608,13 +608,9 @@ function PageContent() {
                                     stopSpeechSignal();
                                   else
                                     getSpeechSignal(
-                                      isFlipped
-                                        ? flashCardSet?.cards[
-                                            gamifiedData?.currentCard - 1
-                                          ]?.term || ""
-                                        : flashCardSet?.cards[
-                                            gamifiedData?.currentCard - 1
-                                          ]?.definition || ""
+                                      flashCardSet?.cards[
+                                        gamifiedData?.currentCard - 1
+                                      ]?.definition || ""
                                     );
                                 }}
                                 type="button"
@@ -673,61 +669,6 @@ function PageContent() {
                           style={{ zIndex: 10 }}
                           className="w-full flex flex-row items-center justify-between absolute top-4 left-0 px-6"
                         >
-                          {!isReviewMode && (
-                            <span className="flex flex-row items-center justify-center gap-2 text-background">
-                              <Popover>
-                                <PopoverTrigger>
-                                  <Tooltip>
-                                    <TooltipTrigger
-                                      type="button"
-                                      className="cursor-pointer"
-                                    >
-                                      <FaWandMagicSparkles className="text-xl" />
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      <p>Get a Hint</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-80">
-                                  <div className="grid gap-4">
-                                    <div className="space-y-2">
-                                      <h4 className="leading-none font-medium">
-                                        Confirm
-                                      </h4>
-                                      <p className="text-muted-foreground text-sm">
-                                        Are you sure you want to spend 1 Hint
-                                        potion to get a hint
-                                      </p>
-                                    </div>
-                                    <div className="grid gap-2">
-                                      <div className="grid grid-cols-3 items-center gap-4">
-                                        <Button
-                                          onClick={() => handleHint()}
-                                          type="button"
-                                          title="Confirm"
-                                        ></Button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </PopoverContent>
-                              </Popover>
-                              <span
-                                className={
-                                  hint === gamifiedData.currentCard
-                                    ? "flex flex-row items-center justify-center"
-                                    : "sr-only"
-                                }
-                              >
-                                {
-                                  flashCardSet.cards[
-                                    gamifiedData?.currentCard - 1
-                                  ]?.hint
-                                }
-                              </span>
-                            </span>
-                          )}
-
                           <span className="flex items-center gap-2">
                             <Tooltip>
                               <TooltipTrigger
@@ -738,13 +679,9 @@ function PageContent() {
                                     stopSpeechSignal();
                                   else
                                     getSpeechSignal(
-                                      isFlipped
-                                        ? flashCardSet?.cards[
-                                            gamifiedData?.currentCard - 1
-                                          ]?.term || ""
-                                        : flashCardSet?.cards[
-                                            gamifiedData?.currentCard - 1
-                                          ]?.definition || ""
+                                      flashCardSet?.cards[
+                                        gamifiedData?.currentCard - 1
+                                      ]?.term || ""
                                     );
                                 }}
                                 type="button"
@@ -770,7 +707,7 @@ function PageContent() {
                               sentence={
                                 flashCardSet?.cards[
                                   gamifiedData?.currentCard - 1
-                                ]?.definition || ""
+                                ]?.term || ""
                               }
                             />
                           </span>
