@@ -33,7 +33,7 @@ interface StoredImage {
 }
 
 const DB_NAME = "NexoraDB";
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const STORE_NAME = "credentials";
 const COMPOUND_CARDS_STORE = "compoundCards";
 const IMAGES_STORE = "images";
