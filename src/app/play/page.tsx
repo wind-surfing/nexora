@@ -66,8 +66,9 @@ function PageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const flashcardId = searchParams.get("flashcard");
+  const isReview = searchParams.get("review") === "true";
   const { user, updateUser } = useUser();
-  const [isReviewMode, setIsReviewMode] = useState<boolean>(false);
+  const [isReviewMode, setIsReviewMode] = useState<boolean>(isReview);
   const [flashCardSet, setFlashCardSet] = useState<CompoundCard>();
   const [gamifiedData, setGamifiedData] = useState<GamifiedData>({
     isCompleted: false,
@@ -506,6 +507,12 @@ function PageContent() {
                 type="button"
                 title={isReviewMode ? "Let's Compete" : "Let's Review"}
                 onClick={() => {
+                  const newUrl = new URL(window.location.href);
+                  newUrl.searchParams.set(
+                    "review",
+                    isReviewMode ? "false" : "true"
+                  );
+                  window.history.replaceState({}, "", newUrl.toString());
                   setIsFlipped(false);
                   setIsReviewMode((prev) => !prev);
                 }}
