@@ -11,7 +11,6 @@ import {
   FaShuffle,
   FaWandMagicSparkles,
 } from "react-icons/fa6";
-import { GiHealthPotion, GiMagicPotion } from "react-icons/gi";
 import { AiFillSound } from "react-icons/ai";
 import Image from "next/image";
 import {
@@ -31,6 +30,7 @@ import { toast } from "sonner";
 import { useUser } from "@/context/UserContext";
 import SignalWave from "@/components/SignalWave";
 import Loader from "@/components/shared/Loader";
+import { itemsList } from "@/config";
 
 interface GamifiedData {
   isCompleted: boolean;
@@ -501,12 +501,16 @@ function PageContent() {
                 }
               ></Button> */}
               <div className="flex flex-row items-center justify-center gap-2">
-                <span className="flex flex-row items-center justify-center gap-1">
-                  <GiHealthPotion /> {user.ownedItems.health}
-                </span>
-                <span className="flex flex-row items-center justify-center gap-1">
-                  <GiMagicPotion /> {user.ownedItems.hint}
-                </span>
+                {itemsList.map((item, index) => {
+                  return (
+                    <span
+                      key={`potion-${index}`}
+                      className="flex flex-row items-center justify-center gap-1"
+                    >
+                      <item.icon /> {user.ownedItems[item.specialId]}
+                    </span>
+                  );
+                })}
               </div>
             </div>
           </header>

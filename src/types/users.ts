@@ -1,3 +1,5 @@
+import { IconType } from "react-icons/lib";
+
 export interface Items {
   specialId: string;
   srcs: string[];
@@ -6,6 +8,7 @@ export interface Items {
   price: number;
   badge: string;
   theme: string;
+  icon: IconType;
   requiredSignalLevel: number;
 }
 

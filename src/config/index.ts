@@ -1,5 +1,6 @@
 import { Card } from "@/types/cards";
 import { Items, User } from "@/types/users";
+import { GiHealthPotion, GiMagicPotion } from "react-icons/gi";
 
 export const credentials = [
   {
@@ -76,6 +77,7 @@ export const itemsList: Items[] = [
     price: 40,
     badge: "",
     theme: "#ffff00",
+    icon: GiMagicPotion,
     requiredSignalLevel: 1,
   },
   {
@@ -86,6 +88,7 @@ export const itemsList: Items[] = [
     price: 120,
     badge: "",
     theme: "#00ff00",
+    icon: GiHealthPotion,
     requiredSignalLevel: 3,
   },
 ];
