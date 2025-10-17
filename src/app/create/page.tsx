@@ -80,7 +80,10 @@ function Page() {
     setCardSetData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    redirectionToPractise?: boolean,
+    e?: React.FormEvent<HTMLFormElement>
+  ) => {
     e?.preventDefault();
 
     if (cardSetData.idea.trim() === "") {
@@ -103,9 +106,13 @@ function Page() {
       return;
     } else {
       try {
-        await storeCompoundCard(compoundCard);
+        const id = await storeCompoundCard(compoundCard);
         toast.success("Flashcard set created!");
-        router.push("/home");
+        if (redirectionToPractise) {
+          router.push(`/play?flashcard=${id}&review=true`);
+        } else {
+          router.push("/home");
+        }
       } catch (error) {
         toast.error("Failed to create flashcard set");
       }
@@ -312,7 +319,7 @@ function Page() {
   return (
     <main className="flex flex-row items-center justify-center w-full py-8 px-4">
       <form
-        onSubmit={handleSubmit}
+        onSubmit={(e) => handleSubmit(false, e)}
         className="flex flex-col items-center w-4/5 h-full gap-6"
       >
         <header className="flex flex-row items-center justify-between sticky top-16 z-20 bg-background h-16 w-full border-b">
@@ -348,6 +355,9 @@ function Page() {
         <div className="flex flex-row items-center justify-between w-full gap-4">
           <div className="flex flex-row items-center justify-center gap-4">
             <Button
+              onClick={() => {
+                handleSubmit(true);
+              }}
               type="button"
               leftIcon={<IoCard />}
               title="Practice Flashcard"
@@ -448,11 +458,8 @@ function Page() {
         <div className="flex flex-col items-center justify-center w-full">
           {cardSetDataList.map((card, index, cardList) => {
             return (
-              <>
-                <section
-                  key={index}
-                  className="flex flex-col items-center w-full overflow-y-auto gap-6 bg-slate-300 rounded"
-                >
+              <React.Fragment key={index}>
+                <section className="flex flex-col items-center w-full overflow-y-auto gap-6 bg-slate-300 rounded">
                   <div className="flex flex-row justify-between items-center w-full py-2 px-4">
                     <div className="text-xl font-bold">{index + 1}</div>
                     <div className="flex flex-row items-center justify-center px-4 py-1 gap-2 bg-background/60 rounded-2xl">
@@ -766,7 +773,7 @@ function Page() {
                     <FaPlus></FaPlus>
                   </span>
                 </div>
-              </>
+              </React.Fragment>
             );
           })}
         </div>
