@@ -52,6 +52,19 @@
   backface-visibility: hidden;
 }
 
+.front {
+  pointer-events: auto;
+}
+
 .back {
   transform: rotateY(180deg);
+  pointer-events: none;
+}
+
+.card.flipped .front {
+  pointer-events: none;
+}
+
+.card.flipped .back {
+  pointer-events: auto;
 }
