@@ -1,6 +1,7 @@
 "use client";
 
 import Button from "@/components/shared/Button";
+import Loader from "@/components/shared/Loader";
 import { useUser } from "@/context/UserContext";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -11,6 +12,7 @@ export default function Home() {
 
   if (user.currentSignalLevel) {
     router.push("/home");
+    return <Loader />;
   }
 
   return (

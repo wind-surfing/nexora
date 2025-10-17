@@ -2,6 +2,7 @@
 
 import Button from "@/components/shared/Button";
 import InputField from "@/components/shared/InputField";
+import Loader from "@/components/shared/Loader";
 import { Separator } from "@/components/ui/separator";
 import { credentials } from "@/config";
 import { useUser } from "@/context/UserContext";
@@ -55,6 +56,7 @@ function Page() {
 
   if (user.currentSignalLevel) {
     router.push("/home");
+    return <Loader />;
   }
 
   return (

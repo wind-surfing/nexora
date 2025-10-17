@@ -30,6 +30,7 @@ import confetti from "canvas-confetti";
 import { toast } from "sonner";
 import { useUser } from "@/context/UserContext";
 import SignalWave from "@/components/SignalWave";
+import Loader from "@/components/shared/Loader";
 
 interface GamifiedData {
   isCompleted: boolean;
@@ -473,11 +474,7 @@ function PageContent() {
   };
 
   if (!flashCardSet?.id) {
-    return (
-      <div className="h-[calc(100vh-64px)] w-full flex flex-row items-center justify-center">
-        Loading...
-      </div>
-    );
+    return <Loader />;
   }
 
   return (
