@@ -55,13 +55,7 @@ interface EnemyState {
 
 function Page() {
   return (
-    <Suspense
-      fallback={
-        <div className="h-[calc(100vh-64px)] w-full flex flex-row items-center justify-center">
-          Loading...
-        </div>
-      }
-    >
+    <Suspense fallback={<Loader />}>
       <PageContent />
     </Suspense>
   );
