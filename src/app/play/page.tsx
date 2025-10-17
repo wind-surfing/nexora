@@ -66,7 +66,7 @@ function PageContent() {
   const router = useRouter();
   const flashcardId = searchParams.get("flashcard");
   const { user, updateUser } = useUser();
-  // const [mode, setMode] = useState<"magic" | "review">("magic");
+  const [isReviewMode, setIsReviewMode] = useState<boolean>(false);
   const [flashCardSet, setFlashCardSet] = useState<CompoundCard>();
   const [gamifiedData, setGamifiedData] = useState<GamifiedData>({
     isCompleted: false,
@@ -485,26 +485,23 @@ function PageContent() {
               <span>Set of {flashCardSet?.idea}</span>
             </div>
             <div className="flex flex-row items-center justify-center gap-8">
-              {/* <Button
+              <Button
                 type="button"
-                title={
-                  mode === "magic" ? "Toggle Review mode" : "Toggle Magic mode"
-                }
-                onClick={() =>
-                  setMode((prev) => (prev === "magic" ? "review" : "magic"))
-                }
-              ></Button> */}
+                title={isReviewMode ? "Magic Mode" : "Do Review"}
+                onClick={() => setIsReviewMode((prev) => !prev)}
+              ></Button>
               <div className="flex flex-row items-center justify-center gap-2">
-                {itemsList.map((item, index) => {
-                  return (
-                    <span
-                      key={`potion-${index}`}
-                      className="flex flex-row items-center justify-center gap-1"
-                    >
-                      <item.icon /> {user.ownedItems[item.specialId]}
-                    </span>
-                  );
-                })}
+                {!isReviewMode &&
+                  itemsList.map((item, index) => {
+                    return (
+                      <span
+                        key={`potion-${index}`}
+                        className="flex flex-row items-center justify-center gap-1"
+                      >
+                        <item.icon /> {user.ownedItems[item.specialId]}
+                      </span>
+                    );
+                  })}
               </div>
             </div>
           </header>
@@ -518,57 +515,60 @@ function PageContent() {
                       style={{ zIndex: 10 }}
                       className="w-full flex flex-row items-center justify-between absolute top-4 left-0 px-6"
                     >
-                      <span className="flex flex-row items-center justify-center gap-2">
-                        <Popover>
-                          <PopoverTrigger>
-                            <Tooltip>
-                              <TooltipTrigger
-                                type="button"
-                                className="cursor-pointer"
-                              >
-                                <FaWandMagicSparkles className="text-xl" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Get a Hint</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-80">
-                            <div className="grid gap-4">
-                              <div className="space-y-2">
-                                <h4 className="leading-none font-medium">
-                                  Confirm
-                                </h4>
-                                <p className="text-muted-foreground text-sm">
-                                  Are you sure you want to spend 1 Hint potion
-                                  to get a hint
-                                </p>
-                              </div>
-                              <div className="grid gap-2">
-                                <div className="grid grid-cols-3 items-center gap-4">
-                                  <Button
-                                    onClick={() => handleHint()}
-                                    type="button"
-                                    title="Confirm"
-                                  ></Button>
+                      {!isReviewMode && (
+                        <span className="flex flex-row items-center justify-center gap-2">
+                          <Popover>
+                            <PopoverTrigger>
+                              <Tooltip>
+                                <TooltipTrigger
+                                  type="button"
+                                  className="cursor-pointer"
+                                >
+                                  <FaWandMagicSparkles className="text-xl" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Get a Hint</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-80">
+                              <div className="grid gap-4">
+                                <div className="space-y-2">
+                                  <h4 className="leading-none font-medium">
+                                    Confirm
+                                  </h4>
+                                  <p className="text-muted-foreground text-sm">
+                                    Are you sure you want to spend 1 Hint potion
+                                    to get a hint
+                                  </p>
+                                </div>
+                                <div className="grid gap-2">
+                                  <div className="grid grid-cols-3 items-center gap-4">
+                                    <Button
+                                      onClick={() => handleHint()}
+                                      type="button"
+                                      title="Confirm"
+                                    ></Button>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </PopoverContent>
-                        </Popover>
-                        <span
-                          className={
-                            hint === gamifiedData.currentCard
-                              ? "flex flex-row items-center justify-center"
-                              : "sr-only"
-                          }
-                        >
-                          {
-                            flashCardSet.cards[gamifiedData?.currentCard - 1]
-                              ?.hint
-                          }
+                            </PopoverContent>
+                          </Popover>
+                          <span
+                            className={
+                              hint === gamifiedData.currentCard
+                                ? "flex flex-row items-center justify-center"
+                                : "sr-only"
+                            }
+                          >
+                            {
+                              flashCardSet.cards[gamifiedData?.currentCard - 1]
+                                ?.hint
+                            }
+                          </span>
                         </span>
-                      </span>
+                      )}
+
                       <span className="flex items-center gap-2">
                         <Tooltip>
                           <TooltipTrigger
@@ -634,69 +634,72 @@ function PageContent() {
                     </div>
                   </section>
                   <section className="w-full mx-4 p-4 flex flex-row items-center justify-between rounded-xl">
-                    <span className="flex flex-row items-center gap-2">
-                      <span className="text-lg">HP</span>
-                      <div className="h-6 w-24 rounded overflow-hidden border-2 border-gray-700 shadow-inner relative">
-                        <div
-                          className="h-full bg-primary/60 transition-all duration-1000 absolute top-0 left-0"
-                          style={{
-                            width:
-                              gamifiedData?.currentUserHealth.toFixed(2) + "%",
-                          }}
-                        ></div>
-                        <div
-                          className="h-full bg-primary/5 transition-all duration-1000 absolute top-0 left-0"
-                          style={{
-                            width:
-                              gamifiedData?.userHealthAfterHealthPotion.toFixed(
-                                2
-                              ) + "%",
-                          }}
-                        ></div>
-                        <span
-                          className="absolute inset-0 flex items-center justify-center text-[#2A2A2A]"
-                          style={{ zIndex: 20 }}
-                        >
-                          {gamifiedData?.currentUserHealth.toFixed(2)}%
-                        </span>
-                      </div>
-                      <span className="flex items-center justify-center">
-                        <Popover>
-                          <PopoverTrigger className="flex flex-row items-center justify-center text-primary cursor-pointer">
-                            <Tooltip>
-                              <TooltipTrigger type="button">
-                                <FaPlus />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Increase HP by 30%</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-80">
-                            <div className="grid gap-4">
-                              <div className="space-y-2">
-                                <h4 className="leading-none font-medium">
-                                  Confirm
-                                </h4>
-                                <p className="text-muted-foreground text-sm">
-                                  Are you sure you want to spend 1 HP potion to
-                                  recover health
-                                </p>
-                              </div>
-                              <div className="grid gap-2">
-                                <div className="grid grid-cols-3 items-center gap-4">
-                                  <Button
-                                    onClick={() => handleHealth()}
-                                    type="button"
-                                    title="Confirm"
-                                  ></Button>
+                    {!isReviewMode && (
+                      <span className="flex flex-row items-center gap-2">
+                        <span className="text-lg">HP</span>
+                        <div className="h-6 w-24 rounded overflow-hidden border-2 border-gray-700 shadow-inner relative">
+                          <div
+                            className="h-full bg-primary/60 transition-all duration-1000 absolute top-0 left-0"
+                            style={{
+                              width:
+                                gamifiedData?.currentUserHealth.toFixed(2) +
+                                "%",
+                            }}
+                          ></div>
+                          <div
+                            className="h-full bg-primary/5 transition-all duration-1000 absolute top-0 left-0"
+                            style={{
+                              width:
+                                gamifiedData?.userHealthAfterHealthPotion.toFixed(
+                                  2
+                                ) + "%",
+                            }}
+                          ></div>
+                          <span
+                            className="absolute inset-0 flex items-center justify-center text-[#2A2A2A]"
+                            style={{ zIndex: 20 }}
+                          >
+                            {gamifiedData?.currentUserHealth.toFixed(2)}%
+                          </span>
+                        </div>
+                        <span className="flex items-center justify-center">
+                          <Popover>
+                            <PopoverTrigger className="flex flex-row items-center justify-center text-primary cursor-pointer">
+                              <Tooltip>
+                                <TooltipTrigger type="button">
+                                  <FaPlus />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Increase HP by 30%</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-80">
+                              <div className="grid gap-4">
+                                <div className="space-y-2">
+                                  <h4 className="leading-none font-medium">
+                                    Confirm
+                                  </h4>
+                                  <p className="text-muted-foreground text-sm">
+                                    Are you sure you want to spend 1 HP potion
+                                    to recover health
+                                  </p>
+                                </div>
+                                <div className="grid gap-2">
+                                  <div className="grid grid-cols-3 items-center gap-4">
+                                    <Button
+                                      onClick={() => handleHealth()}
+                                      type="button"
+                                      title="Confirm"
+                                    ></Button>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </PopoverContent>
-                        </Popover>
+                            </PopoverContent>
+                          </Popover>
+                        </span>
                       </span>
-                    </span>
+                    )}
                     <span className="flex flex-row items-center gap-4">
                       <Tooltip>
                         <TooltipTrigger
@@ -754,83 +757,87 @@ function PageContent() {
                     </span>
                   </section>
                   <section className="w-full mx-4 p-4 flex flex-row items-center justify-between">
-                    {gamifiedData?.correctedCards.includes(
-                      gamifiedData?.currentCard
-                    ) ? (
-                      <>
-                        <span className="text-xl text-primary">
-                          You had completed this card
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        {mappableOptions?.map((option, idx) => {
-                          return (
-                            <Button2
-                              className="cursor-pointer"
-                              onClick={() => handleOptionClick(option)}
-                              key={idx}
-                            >
-                              {option}
-                            </Button2>
-                          );
-                        })}
-                      </>
-                    )}
+                    {!isReviewMode &&
+                      (gamifiedData?.correctedCards.includes(
+                        gamifiedData?.currentCard
+                      ) ? (
+                        <>
+                          <span className="text-xl text-primary">
+                            You had completed this card
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          {mappableOptions?.map((option, idx) => {
+                            return (
+                              <Button2
+                                className="cursor-pointer"
+                                onClick={() => handleOptionClick(option)}
+                                key={idx}
+                              >
+                                {option}
+                              </Button2>
+                            );
+                          })}
+                        </>
+                      ))}
                   </section>
                 </main>
               ) : null}
 
-              <main
-                className={
-                  "flex flex-col items-start justify-start h-full w-3/8"
-                }
-              >
-                <section className="h-full w-full text-white rounded-2xl m-4 px-4 flex flex-col items-start justify-start relative overflow-hidden">
-                  <div className="h-full w-full flex flex-row items-center justify-center">
-                    <Image
-                      src={enemyState.src}
-                      alt={enemyState.alt}
-                      layout="fill"
-                      className={enemyState.className}
-                      style={{
-                        transform: "scaleX(-1)",
-                      }}
-                    />
-                    {gamifiedData.isCompleted ? (
-                      gamifiedData.currentUserHealth <= 0 ? (
-                        <h1 className="text-3xl text-primary">
-                          The Monster won!!!
-                        </h1>
-                      ) : (
-                        <h1 className="text-3xl text-primary">
-                          Congratulations on Winning!!!
-                        </h1>
-                      )
-                    ) : null}
-                  </div>
-                </section>
-                <section className="w-full m-4 p-4 flex flex-row items-center justify-center rounded-xl">
-                  <span className="flex flex-row items-center justify-center gap-2">
-                    <span className="text-lg">HP</span>
-                    <div className="h-6 w-24 rounded overflow-hidden border-2 border-gray-700 shadow-inner relative">
-                      <div
-                        className="h-full bg-destructive/60 transition-all duration-1000 absolute top-0 left-0"
+              {!isReviewMode && (
+                <main
+                  className={
+                    "flex flex-col items-start justify-start h-full w-3/8"
+                  }
+                >
+                  <section className="h-full w-full text-white rounded-2xl m-4 px-4 flex flex-col items-start justify-start relative overflow-hidden">
+                    <div className="h-full w-full flex flex-row items-center justify-center">
+                      <Image
+                        src={enemyState.src}
+                        alt={enemyState.alt}
+                        layout="fill"
+                        className={enemyState.className}
                         style={{
-                          width:
-                            gamifiedData?.currentMonsterHealth.toFixed(2) + "%",
+                          transform: "scaleX(-1)",
                         }}
-                      ></div>
-                      <span
-                        className="absolute inset-0 flex items-center justify-center text-[#2A2A2A]"
-                        style={{ zIndex: 20 }}
-                      >
-                        {gamifiedData?.currentMonsterHealth.toFixed(2)}%
-                      </span>
+                      />
+                      {gamifiedData.isCompleted ? (
+                        gamifiedData.currentUserHealth <= 0 ? (
+                          <h1 className="text-3xl text-primary">
+                            The Monster won!!!
+                          </h1>
+                        ) : (
+                          <h1 className="text-3xl text-primary">
+                            Congratulations on Winning!!!
+                          </h1>
+                        )
+                      ) : null}
                     </div>
-                  </span>
-                </section>
-              </main>
+                  </section>
+                  <section className="w-full m-4 p-4 flex flex-row items-center justify-center rounded-xl">
+                    <span className="flex flex-row items-center justify-center gap-2">
+                      <span className="text-lg">HP</span>
+                      <div className="h-6 w-24 rounded overflow-hidden border-2 border-gray-700 shadow-inner relative">
+                        <div
+                          className="h-full bg-destructive/60 transition-all duration-1000 absolute top-0 left-0"
+                          style={{
+                            width:
+                              gamifiedData?.currentMonsterHealth.toFixed(2) +
+                              "%",
+                          }}
+                        ></div>
+                        <span
+                          className="absolute inset-0 flex items-center justify-center text-[#2A2A2A]"
+                          style={{ zIndex: 20 }}
+                        >
+                          {gamifiedData?.currentMonsterHealth.toFixed(2)}%
+                        </span>
+                      </div>
+                    </span>
+                  </section>
+                </main>
+              )}
             </div>
           </div>
         </section>
