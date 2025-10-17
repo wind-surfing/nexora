@@ -12,8 +12,6 @@ function Page() {
     updateUser,
   } = useUser();
 
-  console.log(currentSignalGauge, requiredSignalGauge);
-
   return (
     <div className="flex flex-col items-center justify-center h-[calc(100vh-64px)] w-full relative overflow-hidden">
       <div className="relative flex flex-col items-center justify-end w-40 h-[400px] rounded-b-3xl border-2 border-primary bg-gradient-to-t from-[#001233] via-[#003366] to-[#0055ff] overflow-hidden">
@@ -21,12 +19,14 @@ function Page() {
           <motion.div
             initial={{ height: 0 }}
             animate={{
-              height: `${(currentSignalGauge / requiredSignalGauge) * 100}%`,
+              height: `${
+                (currentSignalGauge / Math.max(requiredSignalGauge, 5)) * 100
+              }%`,
             }}
             transition={{ type: "spring", stiffness: 80 }}
             className={cn(
               "absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#0099ff] via-[#00ccff] to-[#66ffff]",
-              currentSignalGauge >= requiredSignalGauge
+              currentSignalGauge >= Math.max(requiredSignalGauge, 5)
                 ? "rounded-none animate-pulse"
                 : "rounded-t-full"
             )}
@@ -46,7 +46,8 @@ function Page() {
                 style={{
                   left: `${20 + index * 10}%`,
                   height: `calc(${
-                    (currentSignalGauge / requiredSignalGauge) * 100
+                    (currentSignalGauge / Math.max(requiredSignalGauge, 5)) *
+                    100
                   }% - 10%)`,
                 }}
               ></motion.div>
@@ -57,13 +58,13 @@ function Page() {
             <div className="w-[2px] bg-gradient-to-t from-blue-200 via-blue-500 to-transparent blur-[1px]"></div>
           </div>
 
-          {currentSignalGauge / requiredSignalGauge >= 0.3 ? (
+          {currentSignalGauge / Math.max(requiredSignalGauge, 5) >= 0.3 ? (
             <motion.div
               className="absolute bottom-0 left-0 w-full flex flex-col items-center justify-start z-10 text-white"
               initial={{ height: 0 }}
               animate={{
                 height: `calc(${
-                  (currentSignalGauge / requiredSignalGauge) * 100
+                  (currentSignalGauge / Math.max(requiredSignalGauge, 5)) * 100
                 }% - 10%)`,
               }}
               transition={{ type: "spring", stiffness: 80, delay: 0.5 }}
@@ -72,7 +73,7 @@ function Page() {
                 {currentSignalGauge.toFixed(0)}
               </h1>
               <h1 className="text-xl tracking-wider">
-                /{requiredSignalGauge.toFixed(0)}
+                /{Math.max(requiredSignalGauge, 5).toFixed(0)}
               </h1>
             </motion.div>
           ) : (
@@ -86,12 +87,12 @@ function Page() {
                 {currentSignalGauge.toFixed(0)}
               </h1>
               <h1 className="text-xl tracking-wider">
-                /{requiredSignalGauge.toFixed(0)}
+                /{Math.max(requiredSignalGauge, 5).toFixed(0)}
               </h1>
             </motion.div>
           )}
 
-          {currentSignalGauge >= requiredSignalGauge && (
+          {currentSignalGauge >= Math.max(requiredSignalGauge, 5) && (
             <motion.div
               className="absolute bottom-0 left-0 w-full flex flex-col items-center justify-center z-10 text-white"
               initial={{ height: 0 }}
