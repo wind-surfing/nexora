@@ -523,19 +523,16 @@ function PageContent() {
                 <main className="flex flex-col items-start justify-start w-5/8 h-full">
                   <section
                     className={cn(
-                      "w-full bg-primary text-white rounded-2xl mx-4 mt-4 flex flex-col items-start justify-start relative overflow-hidden ",
+                      "w-full bg-transparent mx-4 mt-4 flex flex-col items-start justify-start relative ",
                       isReviewMode ? "aspect-[16/10] " : "aspect-[16/8] "
                     )}
-                    onClick={() =>
-                      isReviewMode && setIsFlipped((prev) => !prev)
-                    }
                   >
                     <header
                       style={{ zIndex: 10 }}
                       className="w-full flex flex-row items-center justify-between absolute top-4 left-0 px-6"
                     >
                       {!isReviewMode && (
-                        <span className="flex flex-row items-center justify-center gap-2">
+                        <span className="flex flex-row items-center justify-center gap-2 text-background">
                           <Popover>
                             <PopoverTrigger>
                               <Tooltip>
@@ -631,9 +628,12 @@ function PageContent() {
 
                     <section
                       className={cn(
-                        "w-full h-full px-4 flex flex-col items-center justify-center relative ",
-                        isFlipped ? "flip" : ""
+                        "w-full h-full bg-primary text-white rounded-2xl card ",
+                        isFlipped ? "flipped" : ""
                       )}
+                      onClick={() =>
+                        isReviewMode && setIsFlipped((prev) => !prev)
+                      }
                     >
                       <div className="front h-full w-full flex flex-row items-center justify-center">
                         <span style={{ zIndex: 10 }} className="text-4xl">
@@ -653,6 +653,7 @@ function PageContent() {
                           }
                           layout="fill"
                           objectFit="cover"
+                          className="rounded-2xl"
                           style={{
                             opacity: 0.2,
                           }}
@@ -676,6 +677,7 @@ function PageContent() {
                           }
                           layout="fill"
                           objectFit="cover"
+                          className="rounded-2xl"
                           style={{
                             opacity: 0.2,
                           }}

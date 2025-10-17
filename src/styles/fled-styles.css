@@ -32,19 +32,26 @@
 }
 
 .card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  transition: all 0.6s ease-in-out;
   transform-style: preserve-3d;
-  transform: rotateY(var(--rotate-y, 0));
+  transform: perspective(1000px) rotateY(var(--rotate-y, 0));
 }
 
-.card.flip {
+.card.flipped {
   --rotate-y: 180deg;
 }
 
-.front, .back {
+.front,
+.back {
+  position: absolute;
+  padding-inline: 1rem;
   backface-visibility: hidden;
 }
 
 .back {
   transform: rotateY(180deg);
 }
-
