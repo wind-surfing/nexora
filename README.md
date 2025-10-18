@@ -2,6 +2,10 @@
 
 Nexora is one of the if not the best flashcard learning application which allows students to make their studies sound via interactive flashcards.
 
+## Demo
+
+[![Demo Video](https://raw.githubusercontent.com/wind-surfing/nexora/refs/heads/main/public/nexora.png)](https://drive.google.com/file/d/1JT8fBoDcVvBXIEE5TRjT9f6ggA1Ytkyp/view?usp=sharing)
+
 ## Features
 
 - Coins based credits
