@@ -105,7 +105,7 @@ function Page() {
                 onClick={() => {
                   updateUser({
                     currentSignalLevel: currentSignalLevel + 1,
-                    currentSignalGauge: 0,
+                    currentSignalGauge: Math.min(currentSignalGauge - requiredSignalGauge, 0),
                     requiredSignalGauge: +Math.floor(
                       10 * Math.pow(currentSignalLevel, 1.5)
                     ).toFixed(2),
