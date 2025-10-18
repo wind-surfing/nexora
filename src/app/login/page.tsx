@@ -18,7 +18,7 @@ function Page() {
     password: string;
   }>({ username: "", password: "" });
   const router = useRouter();
-  const { user } = useUser();
+  const { user, updateUser } = useUser();
 
   const handleChange = (value: string, field: "username" | "password") => {
     setData((prev) => ({ ...prev, [field]: value }));
