@@ -47,6 +47,19 @@ function Page() {
           hint: 3,
         },
       });
+
+      updateUser({
+        username: credentialInfo?.username,
+        nexoins: credentialInfo?.coins || 0,
+        currentSignalGauge: 0,
+        requiredSignalGauge: 5,
+        currentSignalLevel: 1,
+        lastSignalAt: new Date(),
+        ownedItems: {
+          health: 1,
+          hint: 3,
+        },
+      });
       toast.success("Login successful!");
       router.push("/home");
     } else {
